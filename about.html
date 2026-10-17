@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Cerita lengkap tentang perjalanan saya di dunia web development.">
+    <title>About Me — Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="about.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <header class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="indexh.html" class="nav-logo">
+                <span class="logo-bracket">&lt;</span>Portfolio<span class="logo-bracket"> /&gt;</span>
+            </a>
+            <nav class="nav-menu" id="navMenu">
+                <a href="indexh.html#home" class="nav-link">Home</a>
+                <a href="about.html" class="nav-link active">About</a>
+                <a href="indexh.html#skills" class="nav-link">Skills</a>
+                <a href="indexh.html#projects" class="nav-link">Projects</a>
+                <a href="indexh.html#contact" class="nav-link">Contact</a>
+            </nav>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ABOUT HERO PAGE -->
+    <section class="section about-page">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <span class="section-tag">Story</span>
+                <h1 class="section-title">Cerita <span class="text-gradient">Lengkapku</span></h1>
+                <p class="section-subtitle">Dari mana semuanya bermula, dan ke mana tujuannya.</p>
+            </div>
+            
+            <div class="about-page-content animate-on-scroll">
+                <div class="glass-card article-card">
+                    <h2>Berawal dari Keisengan</h2>
+                    <p>Semuanya bermula waktu zaman sekolah, pas nggak sengaja ngelihat kode Inspect Element di browser. Wah, bisa ganti-ganti teks di website orang (walaupun cuma lokal). Dari situ, rasa penasaran mulai muncul: <em>"Gimana sih cara bikin website beneran?"</em></p>
+
+                    <h2>Perjalanan Belajar</h2>
+                    <p>Jujur, belajar ngoding itu nggak gampang. Dulu saya sempat pusing sama yang namanya CSS Flexbox dan Grid. Apalagi JavaScript, sering banget dapet error <code>undefined is not a function</code>. Tapi justru dari error itu saya belajar problem-solving. StackOverflow dan dokumentasi jadi teman sehari-hari.</p>
+
+                    <h2>Fokus Saat Ini</h2>
+                    <p>Sekarang, saya lagi fokus memperdalam ekosistem Frontend kayak React dan Next.js, sambil nyicil belajar Backend pakai Node.js biar bisa jadi Full-Stack Developer. Walaupun jalannya masih panjang, saya nikmatin setiap prosesnya.</p>
+                    
+                    <h2>Di Luar Layar</h2>
+                    <p>Kalau lagi capek ngeliatin kode, saya biasanya rehat dengan main game, dengerin musik lo-fi, atau cari inspirasi desain dari Dribbble dan Awwwards. Saya percaya keseimbangan antara kerja dan istirahat itu penting banget biar nggak gampang burnout.</p>
+                    
+                    <div class="article-actions">
+                        <a href="indexh.html#projects" class="btn btn-primary">Lihat Karya Saya</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <a href="indexh.html" class="nav-logo">
+                    <span class="logo-bracket">&lt;</span>Portfolio<span class="logo-bracket"> /&gt;</span>
+                </a>
+                <p>Masih belajar, tapi semangat.</p>
+            </div>
+            <div class="footer-socials">
+                <a href="https://github.com/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="GitHub">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                </a>
+                <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Instagram">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+                </a>
+                <a href="https://tiktok.com/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="TikTok">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.96a8.27 8.27 0 0 0 4.87 1.56V7.08a4.83 4.83 0 0 1-1.11-.39z"/></svg>
+                </a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 — dibuat sambil minum kopi</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+
+</body>
+</html>

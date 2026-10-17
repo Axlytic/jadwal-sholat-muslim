@@ -1,0 +1,75 @@
+/* about.css - Spesifik untuk halaman About Me */
+
+.about-page {
+    padding-top: 150px;
+    min-height: calc(100vh - 200px);
+}
+
+.about-page-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.article-card {
+    padding: 40px 50px;
+}
+
+.article-card h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-top: 36px;
+    margin-bottom: 16px;
+}
+
+.article-card h2:first-child {
+    margin-top: 0;
+}
+
+.article-card p {
+    font-size: 1.05rem;
+    color: var(--text-secondary);
+    line-height: 1.8;
+    margin-bottom: 20px;
+}
+
+.article-card code {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffbd2e;
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-family: var(--font-mono);
+    font-size: 0.9em;
+}
+
+.article-card em {
+    color: var(--text-primary);
+    font-style: italic;
+}
+
+.article-actions {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px solid var(--border-glass);
+    display: flex;
+    justify-content: flex-start;
+}
+
+/* Responsiveness buat halaman About */
+@media (max-width: 768px) {
+    .about-page {
+        padding-top: 120px;
+    }
+
+    .article-card {
+        padding: 30px 24px;
+    }
+    
+    .article-card h2 {
+        font-size: 1.3rem;
+    }
+
+    .article-card p {
+        font-size: 1rem;
+    }
+}

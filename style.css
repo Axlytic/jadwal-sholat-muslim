@@ -1,0 +1,1055 @@
+/* =============================================
+   DRIBBLE & MOBBIN BENTO GRID DESIGN SYSTEM
+   Award-winning modern Islamic productivity aesthetics
+   ============================================= */
+:root {
+  /* Rich Obsidian & Deep Slate Palette */
+  --bg-base: #090d16;
+  --bg-surface: #0f172a;
+  --bg-card: rgba(17, 24, 39, 0.72);
+  --bg-card-elevated: rgba(30, 41, 59, 0.85);
+  --bg-card-hover: rgba(30, 41, 59, 0.95);
+  --bg-input: rgba(255, 255, 255, 0.05);
+  --bg-input-focus: rgba(255, 255, 255, 0.09);
+
+  /* Subtle border & glass strokes */
+  --border-card: rgba(255, 255, 255, 0.08);
+  --border-card-top: rgba(255, 255, 255, 0.16);
+  --border-hover: rgba(56, 189, 248, 0.35);
+
+  /* Premium Accents */
+  --emerald-400: #34d399;
+  --emerald-500: #10b981;
+  --emerald-glow: rgba(16, 185, 129, 0.25);
+
+  --gold-400: #fbbf24;
+  --gold-500: #f59e0b;
+  --gold-glow: rgba(245, 158, 11, 0.22);
+
+  --cyan-400: #38bdf8;
+  --cyan-500: #0ea5e9;
+  --cyan-glow: rgba(56, 189, 248, 0.22);
+
+  --indigo-400: #818cf8;
+  --indigo-500: #6366f1;
+
+  /* Typography */
+  --text-white: #ffffff;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+
+  --font-sans: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  --font-arabic: 'Amiri', serif;
+
+  --radius-xs: 8px;
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+  --radius-xl: 32px;
+
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* =============================================
+   RESET & FOUNDATION
+   ============================================= */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+html { font-size: 16px; scroll-behavior: smooth; }
+
+body.theme-dribbble {
+  font-family: var(--font-sans);
+  background-color: var(--bg-base);
+  color: var(--text-primary);
+  line-height: 1.55;
+  min-height: 100vh;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  background-image:
+    radial-gradient(ellipse at 40% 0%, rgba(99, 102, 241, 0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 30%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+    radial-gradient(ellipse at 10% 70%, rgba(245, 158, 11, 0.08) 0%, transparent 50%);
+  background-attachment: fixed;
+}
+
+a { color: var(--cyan-400); text-decoration: none; transition: opacity .2s; }
+a:hover { opacity: .8; }
+
+/* Subtle Ambient Glow Orbs */
+.ambient-glow {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(140px);
+  pointer-events: none;
+  z-index: 0;
+  opacity: .35;
+}
+.ambient-glow--1 {
+  width: 500px; height: 500px;
+  background: radial-gradient(circle, rgba(99, 102, 241, 0.25) 0%, transparent 70%);
+  top: -100px; left: -100px;
+}
+.ambient-glow--2 {
+  width: 550px; height: 550px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.22) 0%, transparent 70%);
+  top: 30%; right: -150px;
+}
+.ambient-glow--3 {
+  width: 450px; height: 450px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.16) 0%, transparent 70%);
+  bottom: 0; left: 15%;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 2.25rem 1.5rem 4.5rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* =============================================
+   TOP APP BAR
+   ============================================= */
+.app-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: .5rem 0;
+}
+
+.app-bar__brand {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.brand-avatar {
+  width: 52px; height: 52px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(16, 185, 129, 0.2));
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.75rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.35);
+  flex-shrink: 0;
+}
+
+.brand-badge {
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  color: var(--emerald-400);
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  margin-bottom: .15rem;
+}
+.pulse-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--emerald-400);
+  box-shadow: 0 0 8px var(--emerald-400);
+  animation: pulseDot 2s infinite;
+}
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .4; transform: scale(1.3); }
+}
+
+.brand-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -.03em;
+  color: #ffffff;
+}
+
+.app-bar__actions {
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  flex-wrap: wrap;
+}
+
+.location-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-card);
+  padding: .45rem .85rem;
+  border-radius: 20px;
+}
+.location-pill svg { color: var(--emerald-400); }
+
+.btn-config-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--border-card-top);
+  color: #ffffff;
+  font-family: var(--font-sans);
+  font-size: .8rem;
+  font-weight: 600;
+  padding: .45rem 1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all .2s var(--ease-spring);
+}
+.btn-config-pill:hover {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-1px);
+}
+
+/* =============================================
+   BENTO GRID (THE MOBBIN & DRIBBLE STAR PATTERN)
+   ============================================= */
+.bento-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-auto-rows: auto;
+  gap: 1.25rem;
+  margin-bottom: 2.75rem;
+}
+
+.bento-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-top: 1px solid var(--border-card-top);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 1.65rem;
+  backdrop-filter: blur(28px) saturate(180%);
+  -webkit-backdrop-filter: blur(28px) saturate(180%);
+  box-shadow:
+    0 12px 32px rgba(0, 0, 0, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  position: relative;
+  overflow: hidden;
+  transition: all .3s var(--ease-spring);
+}
+.bento-card:hover {
+  border-color: rgba(255, 255, 255, 0.16);
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* 1. HERO BENTO CARD (Spans 2 columns on desktop) */
+.bento-card--hero {
+  grid-column: span 2;
+  background: linear-gradient(135deg, rgba(30, 41, 59, 0.9) 0%, rgba(15, 23, 42, 0.85) 100%);
+  border-color: rgba(99, 102, 241, 0.35);
+  box-shadow:
+    0 16px 40px rgba(0, 0, 0, 0.45),
+    0 0 25px rgba(99, 102, 241, 0.15);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 230px;
+}
+
+/* Large Arabic Calligraphy Watermark in Hero */
+.bento-hero__arabic {
+  position: absolute;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--font-arabic);
+  font-size: 7.5rem;
+  font-weight: 700;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.04);
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+  transition: all .5s;
+}
+
+.bento-hero__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  z-index: 1;
+}
+
+.bento-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: .4rem;
+  font-size: .68rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  color: var(--emerald-400);
+  background: rgba(16, 185, 129, 0.14);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+  padding: .25rem .7rem;
+  border-radius: 20px;
+}
+
+.bento-hero__clock {
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: .02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-white);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: .3rem .85rem;
+  border-radius: var(--radius-xs);
+}
+
+.bento-hero__body {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 1.25rem 0;
+  position: relative;
+  z-index: 1;
+}
+
+.bento-hero__prayer-info {
+  display: flex;
+  align-items: center;
+  gap: 1.15rem;
+}
+.bento-hero__icon {
+  font-size: 2.75rem;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,0.4));
+}
+.bento-hero__name {
+  font-size: 2.1rem;
+  font-weight: 800;
+  letter-spacing: -.03em;
+  color: #ffffff;
+  line-height: 1.1;
+}
+.bento-hero__adzan {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--cyan-400);
+  margin-top: .2rem;
+}
+
+.bento-hero__timer-box {
+  text-align: right;
+}
+.bento-hero__countdown {
+  font-size: 2.1rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--gold-400);
+  text-shadow: 0 0 20px var(--gold-glow);
+  line-height: 1.1;
+}
+.bento-hero__countdown-sub {
+  font-size: .65rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: .08em;
+  margin-top: .2rem;
+}
+
+.bento-hero__footer {
+  position: relative;
+  z-index: 1;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  flex-direction: column;
+  gap: .65rem;
+}
+
+.bento-pill-group {
+  display: flex;
+  align-items: center;
+  gap: .85rem;
+  flex-wrap: wrap;
+}
+.bento-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  font-size: .78rem;
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  padding: .35rem .75rem;
+  border-radius: var(--radius-xs);
+}
+.pill-lbl { color: var(--text-secondary); font-weight: 500; }
+.pill-val { font-weight: 800; font-variant-numeric: tabular-nums; }
+.pill-val--green { color: var(--emerald-400); }
+.pill-val--cyan { color: var(--cyan-400); }
+
+.bento-hero__progress-wrap {
+  width: 100%;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.bento-hero__progress-bar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--emerald-400), var(--gold-400));
+  border-radius: 4px;
+  transition: width 1s linear;
+}
+
+/* 2. SLEEP BENTO CARD (1 col) */
+.bento-card--sleep {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.bento-card__title-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+.bento-card__label {
+  font-size: .7rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  color: var(--text-muted);
+}
+.badge-status-pill {
+  font-size: .72rem;
+  font-weight: 700;
+  padding: .2rem .65rem;
+  border-radius: 14px;
+}
+.sleep-badge--good {
+  background: rgba(16, 185, 129, 0.15);
+  color: var(--emerald-400);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+.sleep-badge--fair {
+  background: rgba(245, 158, 11, 0.15);
+  color: var(--gold-400);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+.sleep-badge--low {
+  background: rgba(239, 68, 68, 0.15);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.sleep-metrics-row {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr 1fr;
+  gap: .5rem;
+  text-align: center;
+  align-items: center;
+  padding: .5rem 0;
+}
+.sleep-metric { display: flex; flex-direction: column; }
+.metric-lbl { font-size: .68rem; font-weight: 600; color: var(--text-muted); margin-bottom: .2rem; }
+.metric-val { font-size: 1.25rem; font-weight: 800; color: #ffffff; font-variant-numeric: tabular-nums; }
+.metric-val--highlight { font-size: 1.4rem; color: var(--gold-400); }
+.metric-hint { font-size: .68rem; color: var(--text-secondary); margin-top: .15rem; }
+
+/* 3. CALENDAR BENTO CARD */
+.bento-card--date {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.badge-mini-tag {
+  font-size: .68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  background: rgba(255, 255, 255, 0.05);
+  padding: .15rem .5rem;
+  border-radius: 6px;
+}
+.badge-mini-tag--amber {
+  color: var(--gold-400);
+  background: rgba(245, 158, 11, 0.15);
+}
+
+.dates-content {
+  display: flex;
+  flex-direction: column;
+  gap: .55rem;
+  margin-top: .5rem;
+}
+.dates-content span {
+  font-size: .88rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  background: rgba(255, 255, 255, 0.03);
+  padding: .5rem .85rem;
+  border-radius: var(--radius-xs);
+  border: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+/* 4. STUDY STATS CARD */
+.bento-card--study {
+  grid-column: span 2;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.study-stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  margin-top: .5rem;
+}
+.study-stats-num {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--gold-400);
+  line-height: 1.1;
+  letter-spacing: -.02em;
+}
+.study-stats-lbl {
+  font-size: .78rem;
+  color: var(--text-secondary);
+  font-weight: 500;
+  margin-top: .2rem;
+}
+
+/* =============================================
+   CONFIG DRAWER (SETTINGS)
+   ============================================= */
+.config-drawer {
+  background: var(--bg-card-elevated);
+  border: 1px solid var(--border-card-top);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem 1.75rem;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.4);
+  animation: fadeUp .3s var(--ease-spring);
+}
+.config-drawer.is-hidden { display: none; }
+
+.drawer-header { margin-bottom: 1.25rem; }
+.drawer-header h3 { font-size: 1.15rem; font-weight: 700; color: #ffffff; }
+.drawer-header p { font-size: .8rem; color: var(--text-secondary); margin-top: .15rem; }
+
+.config-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.25rem;
+}
+.config-box label {
+  display: block;
+  font-size: .8rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: .4rem;
+}
+.input-unit-wrap {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.input-unit-wrap input {
+  width: 75px;
+  padding: .45rem .6rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-xs);
+  color: #ffffff;
+  font-family: var(--font-sans);
+  font-size: .9rem;
+  font-weight: 700;
+  text-align: center;
+  outline: none;
+  transition: all .2s;
+}
+.input-unit-wrap input:focus {
+  border-color: var(--cyan-400);
+  background: var(--bg-input-focus);
+  box-shadow: 0 0 12px var(--cyan-glow);
+}
+.input-unit-wrap span { font-size: .8rem; color: var(--text-muted); }
+
+/* =============================================
+   SECTIONS & HEADERS
+   ============================================= */
+.section {
+  margin-bottom: 3rem;
+}
+.section__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 1.35rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.section__title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -.02em;
+  color: #ffffff;
+}
+.section__subtitle {
+  font-size: .82rem;
+  color: var(--text-secondary);
+  margin-top: .15rem;
+}
+
+.section__legend {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  font-size: .75rem;
+  color: var(--text-muted);
+}
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+.legend-dot--green { background: var(--emerald-400); }
+.legend-dot--cyan { background: var(--cyan-400); }
+
+/* =============================================
+   5 PRAYER CARDS (DRIBBLE TILES)
+   ============================================= */
+.prayer-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1.15rem;
+}
+
+.prayer-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-top: 1px solid var(--border-card-top);
+  border-radius: var(--radius-lg);
+  padding: 1.35rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  transition: all .3s var(--ease-spring);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  position: relative;
+  overflow: hidden;
+}
+
+.prayer-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(56, 189, 248, 0.4);
+  background: var(--bg-card-hover);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.45);
+}
+
+/* Active / Current Prayer Card */
+.prayer-card.is-current {
+  border-color: var(--cyan-400);
+  background: linear-gradient(170deg, rgba(14, 165, 233, 0.18) 0%, rgba(15, 23, 42, 0.9) 100%);
+  box-shadow:
+    0 16px 36px rgba(0, 0, 0, 0.5),
+    0 0 24px rgba(56, 189, 248, 0.25);
+}
+.prayer-card.is-current::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--cyan-400), var(--emerald-400));
+}
+
+.prayer-card__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: .4rem;
+}
+.prayer-card__icon {
+  font-size: 1.6rem;
+}
+.prayer-card__badge {
+  font-size: .62rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  padding: .2rem .55rem;
+  border-radius: 12px;
+  background: rgba(56, 189, 248, 0.2);
+  color: var(--cyan-400);
+  border: 1px solid var(--cyan-400);
+  display: none;
+}
+.prayer-card.is-current .prayer-card__badge { display: inline-block; }
+
+.prayer-card__name-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: .25rem;
+}
+.prayer-card__name {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #ffffff;
+}
+.prayer-card__arabic {
+  font-family: var(--font-arabic);
+  font-size: 1.15rem;
+  color: var(--text-muted);
+}
+
+.prayer-card__time {
+  font-size: 1.85rem;
+  font-weight: 800;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: .85rem;
+  letter-spacing: -.03em;
+  line-height: 1.1;
+}
+
+/* Timing Info Box (Iqomah & Depart) */
+.prayer-card__timing-box {
+  background: rgba(0, 0, 0, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: var(--radius-sm);
+  padding: .55rem .75rem;
+  margin-bottom: .85rem;
+  display: flex;
+  flex-direction: column;
+  gap: .35rem;
+}
+.timing-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: .74rem;
+}
+.timing-row__label {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+.timing-row__val {
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+}
+.timing-row__val--depart { color: var(--cyan-400); }
+.timing-row__val--iqomah { color: var(--emerald-400); }
+
+/* Card Segmented Tabs */
+.card-tabs {
+  display: flex;
+  background: rgba(0, 0, 0, 0.4);
+  border-radius: 8px;
+  padding: 2px;
+  margin-bottom: .75rem;
+}
+.card-tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: .7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding: .3rem 0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.card-tab-btn.is-active {
+  background: rgba(255, 255, 255, 0.12);
+  color: #ffffff;
+}
+
+.card-tab-pane { display: none; }
+.card-tab-pane.is-active { display: block; animation: fadeUp .25s var(--ease-spring); }
+
+/* Study Toggle & Inputs */
+.prayer-card__study {
+  margin-top: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: .75rem;
+}
+
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: .5rem;
+}
+.toggle input { display: none; }
+.toggle__track {
+  width: 34px; height: 18px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  position: relative;
+  transition: background .25s;
+  flex-shrink: 0;
+}
+.toggle__track::after {
+  content: '';
+  position: absolute;
+  width: 14px; height: 14px;
+  background: #ffffff;
+  border-radius: 50%;
+  top: 2px; left: 2px;
+  transition: transform .25s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+.toggle input:checked + .toggle__track {
+  background: var(--gold-500);
+}
+.toggle input:checked + .toggle__track::after {
+  transform: translateX(16px);
+}
+.toggle__label {
+  font-size: .74rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.study-inputs, .iqomah-inputs {
+  display: grid;
+  gap: .45rem;
+}
+.study-inputs {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transition: max-height .35s var(--ease-spring), opacity .25s;
+}
+.study-inputs.is-visible {
+  max-height: 200px;
+  opacity: 1;
+  margin-top: .2rem;
+}
+
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+.input-row__label {
+  font-size: .7rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  font-weight: 500;
+}
+.input-row input[type="number"] {
+  width: 54px;
+  padding: .3rem .35rem;
+  background: var(--bg-input);
+  border: 1px solid var(--border-card);
+  border-radius: var(--radius-xs);
+  color: #ffffff;
+  font-family: var(--font-sans);
+  font-size: .82rem;
+  font-weight: 700;
+  text-align: center;
+  outline: none;
+  transition: all .2s;
+  -moz-appearance: textfield;
+}
+.input-row input[type="number"]::-webkit-inner-spin-button,
+.input-row input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+.input-row input[type="number"]:focus {
+  border-color: var(--gold-400);
+  background: var(--bg-input-focus);
+  box-shadow: 0 0 10px var(--gold-glow);
+}
+.input-row__unit { font-size: .68rem; color: var(--text-muted); }
+
+.study-preview {
+  margin-top: .4rem;
+  padding: .35rem .6rem;
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  border-radius: var(--radius-xs);
+  font-size: .7rem;
+  color: var(--gold-400);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: .3rem;
+}
+
+/* =============================================
+   TIMELINE FEED (MOBBIN AGENDA STYLE)
+   ============================================= */
+.filter-pill-bar {
+  display: flex;
+  gap: .35rem;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 3px;
+  border-radius: 20px;
+  border: 1px solid var(--border-card);
+}
+.filter-pill {
+  background: transparent;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: .76rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding: .35rem .95rem;
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all .2s;
+}
+.filter-pill:hover { color: #ffffff; }
+.filter-pill.is-active {
+  background: #ffffff;
+  color: #000000;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+}
+
+.timeline {
+  position: relative;
+  padding-left: 2.25rem;
+}
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 9px;
+  top: 10px;
+  bottom: 10px;
+  width: 2px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+}
+
+.timeline-item {
+  position: relative;
+  padding: .5rem 0 1.25rem 0;
+  animation: fadeUp .35s var(--ease-spring) both;
+}
+.timeline-item:last-child { padding-bottom: 0; }
+
+.timeline-item__dot {
+  position: absolute;
+  left: -2.25rem;
+  top: .75rem;
+  width: 12px; height: 12px;
+  border-radius: 50%;
+  border: 2.5px solid;
+  background: var(--bg-base);
+  z-index: 1;
+}
+
+.timeline-item--prayer .timeline-item__dot { border-color: var(--emerald-400); box-shadow: 0 0 10px var(--emerald-glow); }
+.timeline-item--study .timeline-item__dot { border-color: var(--gold-400); box-shadow: 0 0 10px var(--gold-glow); }
+.timeline-item--depart .timeline-item__dot { border-color: var(--cyan-400); width: 10px; height: 10px; left: calc(-2.25rem + 1px); top: .8rem; }
+.timeline-item--iqomah .timeline-item__dot { border-color: var(--emerald-400); width: 10px; height: 10px; left: calc(-2.25rem + 1px); top: .8rem; }
+.timeline-item--sleep .timeline-item__dot { border-color: var(--indigo-400); }
+.timeline-item--wake .timeline-item__dot { border-color: #c084fc; }
+
+.timeline-item__content {
+  background: var(--bg-card);
+  border: 1px solid var(--border-card);
+  border-top: 1px solid var(--border-card-top);
+  border-radius: var(--radius-md);
+  padding: .85rem 1.25rem;
+  transition: all .25s var(--ease-spring);
+}
+.timeline-item__content:hover {
+  transform: translateX(4px);
+  background: var(--bg-card-hover);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+.timeline-item__time {
+  font-size: .78rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: .15rem;
+}
+.timeline-item--prayer .timeline-item__time { color: var(--emerald-400); }
+.timeline-item--study .timeline-item__time { color: var(--gold-400); }
+.timeline-item--depart .timeline-item__time { color: var(--cyan-400); }
+.timeline-item--iqomah .timeline-item__time { color: var(--emerald-400); }
+.timeline-item--sleep .timeline-item__time { color: var(--indigo-400); }
+.timeline-item--wake .timeline-item__time { color: #c084fc; }
+
+.timeline-item__label {
+  font-size: .92rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+.timeline-item__detail {
+  font-size: .75rem;
+  color: var(--text-secondary);
+  margin-top: .15rem;
+}
+
+.timeline-sleep-banner {
+  background: linear-gradient(90deg, rgba(99, 102, 241, 0.15), rgba(16, 185, 129, 0.1));
+  border: 1px dashed rgba(99, 102, 241, 0.35);
+  border-radius: var(--radius-md);
+  padding: .75rem 1.25rem;
+  margin: .85rem 0 1.25rem 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: .82rem;
+  color: #ffffff;
+  font-weight: 600;
+}
+.timeline-sleep-banner strong { color: var(--gold-400); }
+
+/* =============================================
+   FOOTER
+   ============================================= */
+.footer {
+  margin-top: 4rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-card);
+  text-align: center;
+  font-size: .76rem;
+  color: var(--text-muted);
+}
+.footer__note { margin-top: .35rem; color: var(--text-secondary); }
+.footer__note strong { color: #ffffff; }
+
+/* =============================================
+   ANIMATIONS & RESPONSIVE
+   ============================================= */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.date-skeleton {
+  display: inline-block;
+  width: 220px;
+  height: 14px;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+@media (max-width: 900px) {
+  .bento-grid { grid-template-columns: 1fr; }
+  .bento-card--hero { grid-column: span 1; }
+  .bento-card--study { grid-column: span 1; }
+  .prayer-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 680px) {
+  .container { padding: 1.25rem .85rem 3.5rem; }
+  .app-bar { flex-direction: column; align-items: flex-start; gap: .85rem; }
+  .app-bar__actions { width: 100%; justify-content: space-between; }
+  .bento-card { padding: 1.25rem; }
+  .bento-hero__name { font-size: 1.75rem; }
+  .bento-hero__countdown { font-size: 1.75rem; }
+  .bento-hero__arabic { font-size: 5rem; }
+  .prayer-grid { grid-template-columns: 1fr; }
+  .timeline { padding-left: 1.85rem; }
+  .timeline-item__dot { left: -1.85rem; }
+  .timeline-item--depart .timeline-item__dot,
+  .timeline-item--iqomah .timeline-item__dot { left: calc(-1.85rem + 1px); }
+}

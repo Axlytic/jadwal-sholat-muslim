@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Jadwal Harian Muslim — Sholat, Belajar & Istirahat | Banjarbaru</title>
+  <meta name="description" content="Dashboard jadwal sholat 5 waktu akurat, estimasi iqomah & waktu berangkat masjid, serta manajemen waktu belajar dan istirahat tidur untuk Banjarbaru.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="theme-dribbble">
+  <!-- Subtle ambient background gradients -->
+  <div class="ambient-glow ambient-glow--1"></div>
+  <div class="ambient-glow ambient-glow--2"></div>
+  <div class="ambient-glow ambient-glow--3"></div>
+
+  <div class="container">
+    <!-- ===== TOP APP BAR ===== -->
+    <header class="app-bar">
+      <div class="app-bar__brand">
+        <div class="brand-avatar">
+          <span>🕌</span>
+        </div>
+        <div>
+          <div class="brand-badge"><span class="pulse-dot"></span> LIVE WITA • BANJARBARU</div>
+          <h1 class="brand-title">Jadwal Harian Muslim</h1>
+        </div>
+      </div>
+
+      <div class="app-bar__actions">
+        <div class="location-pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+          <span>Landasan Ulin, Banjarbaru</span>
+        </div>
+        <button class="btn-config-pill" id="btnToggleSleepConfig" type="button">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          <span id="btnToggleSleepConfigText">Pengaturan Waktu</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ===== BENTO GRID DASHBOARD (Trending Mobbin & Dribbble Pattern) ===== -->
+    <div class="bento-grid">
+      <!-- 1. HERO CARD: Next Prayer with Arabic Calligraphy & Living Countdown -->
+      <div class="bento-card bento-card--hero" id="bentoHeroCard">
+        <div class="bento-hero__arabic" id="heroArabicCalligraphy">الظهر</div>
+        <div class="bento-hero__header">
+          <div class="bento-tag"><span class="pulse-dot"></span> BERIKUTNYA</div>
+          <div class="bento-hero__clock" id="clockTime">--:--:--</div>
+        </div>
+
+        <div class="bento-hero__body">
+          <div class="bento-hero__prayer-info">
+            <span class="bento-hero__icon" id="heroIcon">☀️</span>
+            <div>
+              <div class="bento-hero__name" id="heroPrayerName">Dzuhur</div>
+              <div class="bento-hero__adzan" id="heroAdzanTime">--:-- WITA</div>
+            </div>
+          </div>
+
+          <div class="bento-hero__timer-box">
+            <div class="bento-hero__countdown" id="heroCountdownTimer">--m --s</div>
+            <div class="bento-hero__countdown-sub">WAKTU TERSISA</div>
+          </div>
+        </div>
+
+        <div class="bento-hero__footer">
+          <div class="bento-pill-group">
+            <div class="bento-pill">
+              <span class="pill-lbl">⏱️ Iqomah</span>
+              <span class="pill-val pill-val--green" id="heroIqomahTime">--:--</span>
+            </div>
+            <div class="bento-pill">
+              <span class="pill-lbl">🚶 Berangkat Maks</span>
+              <span class="pill-val pill-val--cyan" id="heroDepartTime">--:--</span>
+            </div>
+          </div>
+          <div class="bento-hero__progress-wrap">
+            <div class="bento-hero__progress-bar" id="heroProgressBar" style="width: 50%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. SLEEP & RECHARGE CARD -->
+      <div class="bento-card bento-card--sleep">
+        <div class="bento-card__title-row">
+          <div class="bento-card__label">🛏️ TIDUR & PEMULIHAN</div>
+          <span class="badge-status-pill" id="sleepQualityBadge">Memeriksa...</span>
+        </div>
+
+        <div class="sleep-metrics-row">
+          <div class="sleep-metric">
+            <span class="metric-lbl">Tidur Malam</span>
+            <span class="metric-val" id="sleepTimeDisplay">--:--</span>
+            <span class="metric-hint" id="sleepTimeHint">Pasca Isya</span>
+          </div>
+          <div class="sleep-metric sleep-metric--divider">
+            <span class="metric-lbl">Total Istirahat</span>
+            <span class="metric-val metric-val--highlight" id="sleepDurationDisplay">-- jam -- mnt</span>
+            <span class="metric-hint">Target 7–8 Jam</span>
+          </div>
+          <div class="sleep-metric">
+            <span class="metric-lbl">Bangun Pagi</span>
+            <span class="metric-val" id="wakeTimeDisplay">--:--</span>
+            <span class="metric-hint" id="wakeTimeHint">Jelang Subuh</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. CALENDAR & HIJRI CARD -->
+      <div class="bento-card bento-card--date">
+        <div class="bento-card__title-row">
+          <div class="bento-card__label">📅 KALENDER HARI INI</div>
+          <span class="badge-mini-tag">Kemenag RI</span>
+        </div>
+        <div class="dates-content" id="headerDates">
+          <span class="date-skeleton"></span>
+        </div>
+      </div>
+
+      <!-- 4. STUDY & PRODUCTIVITY CARD -->
+      <div class="bento-card bento-card--study">
+        <div class="bento-card__title-row">
+          <div class="bento-card__label">📚 PRODUKTIVITAS BELAJAR</div>
+          <span class="badge-mini-tag badge-mini-tag--amber">Terjadwal</span>
+        </div>
+        <div class="study-stats-grid">
+          <div>
+            <div class="study-stats-num" id="summaryStudyHours">--</div>
+            <div class="study-stats-lbl">Total Jam Belajar</div>
+          </div>
+          <div>
+            <div class="study-stats-num" id="summaryStudySessions">--</div>
+            <div class="study-stats-lbl">Sesi Belajar Hari Ini</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hidden / Expandable Settings Drawer -->
+    <div class="config-drawer is-hidden" id="sleepConfigPanel">
+      <div class="drawer-header">
+        <h3>⚙️ Pengaturan Waktu & Masjid</h3>
+        <p>Sesuaikan jeda iqomah, waktu jalan ke masjid, dan jadwal tidur Anda</p>
+      </div>
+      <div class="config-grid">
+        <div class="config-box">
+          <label for="sleepAfterIshaInput">🌙 Jeda Tidur Pasca Isya</label>
+          <div class="input-unit-wrap">
+            <input type="number" id="sleepAfterIshaInput" min="15" max="300" value="60">
+            <span>menit</span>
+          </div>
+        </div>
+        <div class="config-box">
+          <label for="wakeBeforeFajrInput">⏰ Bangun Sebelum Subuh</label>
+          <div class="input-unit-wrap">
+            <input type="number" id="wakeBeforeFajrInput" min="10" max="240" value="30">
+            <span>menit</span>
+          </div>
+        </div>
+        <div class="config-box">
+          <label for="globalTravelInput">🚶 Jarak Tempuh ke Masjid</label>
+          <div class="input-unit-wrap">
+            <input type="number" id="globalTravelInput" min="1" max="60" value="5">
+            <span>menit jalan kaki</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== 5 PRAYER CARDS (Modern Dribbble Tiles) ===== -->
+    <section class="section">
+      <div class="section__header">
+        <div>
+          <h2 class="section__title">Jadwal Sholat 5 Waktu</h2>
+          <p class="section__subtitle">Waktu adzan, durasi iqomah masjid, dan estimasi waktu berangkat</p>
+        </div>
+        <div class="section__legend">
+          <span class="legend-dot legend-dot--green"></span> <span>Iqomah</span>
+          <span class="legend-dot legend-dot--cyan"></span> <span>Berangkat</span>
+        </div>
+      </div>
+
+      <div class="prayer-grid" id="prayerGrid">
+        <div class="loading-state" id="loadingState">
+          <div class="spinner"></div>
+          <p>Memuat jadwal sholat...</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== TIMELINE FEED (Mobbin Agenda Style) ===== -->
+    <section class="section" id="scheduleSection" style="display:none;">
+      <div class="section__header">
+        <div>
+          <h2 class="section__title">Agenda & Alur Harian</h2>
+          <p class="section__subtitle">Urutan aktivitas berurutan dari subuh hingga istirahat malam</p>
+        </div>
+        <div class="filter-pill-bar" id="timelineFilter">
+          <button class="filter-pill is-active" data-filter="all">Semua</button>
+          <button class="filter-pill" data-filter="prayer">🕌 Masjid</button>
+          <button class="filter-pill" data-filter="study">📚 Belajar</button>
+          <button class="filter-pill" data-filter="sleep">🛏️ Istirahat</button>
+        </div>
+      </div>
+
+      <div class="timeline" id="timeline">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">
+      <p>Data hisab dari <a href="https://aladhan.com" target="_blank" rel="noopener">Aladhan API</a> • Landasan Ulin, Banjarbaru</p>
+      <p class="footer__note">Didesain dengan inspirasi <strong>Dribbble & Mobbin Bento Grid</strong></p>
+    </footer>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>

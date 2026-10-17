@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Portfolio — tempat saya naruh hasil kerja dan eksperimen web development.">
+    <title>Portfolio</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <header class="navbar" id="navbar">
+        <div class="container nav-container">
+            <a href="#" class="nav-logo">
+                <span class="logo-bracket">&lt;</span>Portfolio<span class="logo-bracket"> /&gt;</span>
+            </a>
+            <nav class="nav-menu" id="navMenu">
+                <a href="#home" class="nav-link active">Home</a>
+                <a href="#about" class="nav-link">About</a>
+                <a href="#skills" class="nav-link">Skills</a>
+                <a href="#projects" class="nav-link">Projects</a>
+                <a href="#contact" class="nav-link">Contact</a>
+            </nav>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="hero" id="home">
+        <div class="hero-bg-grid"></div>
+        <div class="hero-glow hero-glow-1"></div>
+        <div class="hero-glow hero-glow-2"></div>
+        <div class="container hero-content">
+            <div class="hero-text">
+                <p class="hero-greeting animate-on-scroll">Halo 👋</p>
+                <h1 class="hero-name animate-on-scroll">
+                    Saya suka<br><span class="text-gradient">bikin website.</span>
+                </h1>
+                <p class="hero-description animate-on-scroll">
+                    Mahasiswa yang lagi belajar web development. Suka ngulik frontend, kadang backend juga. Kalau ada waktu luang biasanya ngoding atau scroll TikTok.
+                </p>
+                <div class="hero-actions animate-on-scroll">
+                    <a href="#projects" class="btn btn-primary">
+                        <span>Lihat Proyek</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+                    </a>
+                    <a href="#contact" class="btn btn-outline">Kontak</a>
+                </div>
+                <div class="hero-socials animate-on-scroll">
+                    <a href="https://github.com/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="GitHub">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                    </a>
+                    <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Instagram">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+                    </a>
+                    <a href="https://tiktok.com/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="TikTok">
+                        <svg viewBox="0 0 24 24" width="22" height="22" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.96a8.27 8.27 0 0 0 4.87 1.56V7.08a4.83 4.83 0 0 1-1.11-.39z"/></svg>
+                    </a>
+                </div>
+            </div>
+            <div class="hero-visual animate-on-scroll">
+                <div class="hero-card glass-card">
+                    <div class="code-window">
+                        <div class="code-dots">
+                            <span class="dot dot-red"></span>
+                            <span class="dot dot-yellow"></span>
+                            <span class="dot dot-green"></span>
+                        </div>
+                        <pre class="code-block"><code><span class="code-keyword">const</span> <span class="code-variable">me</span> = {
+  <span class="code-property">status</span>: <span class="code-string">"masih belajar"</span>,
+  <span class="code-property">stack</span>: [<span class="code-string">"HTML"</span>, <span class="code-string">"CSS"</span>, <span class="code-string">"JS"</span>],
+  <span class="code-property">coffee</span>: <span class="code-boolean">true</span>,
+  <span class="code-property">bug</span>: <span class="code-string">"banyak tapi santai"</span>
+};</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="scroll-indicator">
+            <div class="mouse">
+                <div class="mouse-wheel"></div>
+            </div>
+            <span>Scroll</span>
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="section about" id="about">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <span class="section-tag">About</span>
+                <h2 class="section-title">Siapa <span class="text-gradient">saya?</span></h2>
+            </div>
+            <div class="about-grid">
+                <div class="about-content animate-on-scroll">
+                    <p>Saya mahasiswa yang kebetulan suka ngoding. Awalnya cuma iseng belajar HTML waktu SMA, lama-lama ketagihan. Sekarang lebih fokus ke web development, tapi masih sering trial and error — dan itu bagian serunya.</p>
+                    <p>Kalau nggak lagi ngoding, biasanya nonton tutorial YouTube, main game, atau scrolling feed sampai lupa waktu. Nothing fancy, tapi ya begitulah.</p>
+                    <div class="about-actions" style="margin-top: 24px; margin-bottom: 24px;">
+                        <a href="about.html" class="btn btn-outline">Baca Cerita Lengkapku</a>
+                    </div>
+                    <div class="about-stats">
+                        <div class="stat-item">
+                            <span class="stat-number" data-count="15">0</span><span class="stat-plus">+</span>
+                            <span class="stat-label">Proyek</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" data-count="2">0</span><span class="stat-plus">+</span>
+                            <span class="stat-label">Tahun Ngoding</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-number" data-count="999">0</span><span class="stat-plus">+</span>
+                            <span class="stat-label">Error Diperbaiki</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="about-image animate-on-scroll">
+                    <div class="about-card glass-card">
+                        <div class="about-avatar">
+                            <div class="avatar-ring"></div>
+                            <div class="avatar-placeholder">
+                                <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            </div>
+                        </div>
+                        <h3>Your Name Here</h3>
+                        <p class="about-role">Mahasiswa / Web Dev</p>
+                        <div class="about-tags">
+                            <span class="tag">Frontend</span>
+                            <span class="tag">Belajar Backend</span>
+                            <span class="tag">UI Design</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SKILLS -->
+    <section class="section skills" id="skills">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <span class="section-tag">Skills</span>
+                <h2 class="section-title">Yang saya <span class="text-gradient">bisa</span></h2>
+                <p class="section-subtitle">Bukan expert, tapi cukup buat bikin sesuatu yang jalan.</p>
+            </div>
+            <div class="skills-grid">
+                <div class="skill-card glass-card animate-on-scroll">
+                    <div class="skill-icon" style="--accent: #e34f26;">
+                        <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor"><path d="M1.5 0h21l-1.91 21.563L11.977 24l-8.564-2.438L1.5 0zm7.031 9.75l-.232-2.718 10.059.003.076-.914.203-2.129.024-.292H6.862l.074.81.36 4.24h8.117l-.337 3.876-3.08.835-3.06-.836-.19-2.167H5.959l.36 4.171 5.656 1.57.037-.01 5.63-1.563.723-8.14.063-.672H8.53z"/></svg>
+                    </div>
+                    <h3>HTML</h3>
+                    <p>Pondasi semuanya</p>
+                    <div class="skill-bar"><div class="skill-fill" style="--fill: 95%; --accent: #e34f26;"></div></div>
+                </div>
+                <div class="skill-card glass-card animate-on-scroll">
+                    <div class="skill-icon" style="--accent: #1572b6;">
+                        <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor"><path d="M1.5 0h21l-1.91 21.563L11.977 24l-8.565-2.438L1.5 0zm17.09 4.413L5.41 4.41l.213 2.622 10.125.002-.255 2.716h-6.64l.24 2.573h6.182l-.366 3.523-2.91.804-2.956-.81-.188-2.11h-2.61l.29 3.855L12 19.002l5.355-1.12.726-8.465-.24-.056H18.59z"/></svg>
+                    </div>
+                    <h3>CSS</h3>
+                    <p>Yang bikin cantik</p>
+                    <div class="skill-bar"><div class="skill-fill" style="--fill: 90%; --accent: #1572b6;"></div></div>
+                </div>
+                <div class="skill-card glass-card animate-on-scroll">
+                    <div class="skill-icon" style="--accent: #f7df1e;">
+                        <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor"><path d="M0 0h24v24H0V0zm22.034 18.276c-.175-1.095-.888-2.015-3.003-2.873-.736-.345-1.554-.585-1.797-1.14-.091-.33-.105-.51-.046-.705.15-.646.915-.84 1.515-.66.39.12.75.42.976.9 1.034-.676 1.034-.676 1.755-1.125-.27-.42-.405-.6-.586-.78-.63-.705-1.469-1.065-2.834-1.034l-.705.089c-.676.165-1.32.525-1.71 1.005-1.14 1.291-.811 3.541.569 4.471 1.365 1.02 3.361 1.244 3.616 2.205.24 1.17-.87 1.545-1.966 1.41-.811-.18-1.26-.586-1.755-1.336l-1.83 1.051c.21.48.45.689.81 1.109 1.74 1.756 6.09 1.666 6.871-1.004.029-.09.24-.705.074-1.65l.046.067zm-8.983-7.245h-2.248c0 1.938-.009 3.864-.009 5.805 0 1.232.063 2.363-.138 2.711-.33.689-1.18.601-1.566.48-.396-.196-.597-.466-.83-.855-.063-.105-.11-.196-.127-.196l-1.825 1.125c.305.63.75 1.172 1.324 1.517.855.51 2.004.675 3.207.405.783-.226 1.458-.691 1.811-1.411.51-.93.402-2.07.397-3.346.012-2.054 0-4.109 0-6.179l.004-.056z"/></svg>
+                    </div>
+                    <h3>JavaScript</h3>
+                    <p>Love-hate relationship</p>
+                    <div class="skill-bar"><div class="skill-fill" style="--fill: 75%; --accent: #f7df1e;"></div></div>
+                </div>
+                <div class="skill-card glass-card animate-on-scroll">
+                    <div class="skill-icon" style="--accent: #61dafb;">
+                        <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor"><path d="M14.23 12.004a2.236 2.236 0 0 1-2.235 2.236 2.236 2.236 0 0 1-2.236-2.236 2.236 2.236 0 0 1 2.235-2.236 2.236 2.236 0 0 1 2.236 2.236zm2.648-10.69c-1.346 0-3.107.96-4.888 2.622-1.78-1.653-3.542-2.602-4.887-2.602-.31 0-.592.06-.838.174C4.98 2.098 4.39 3.56 4.544 5.706c.056.779.19 1.622.39 2.51a12.14 12.14 0 0 0-.938.72C2.13 10.504 1.234 12.203 1.234 13.5c0 2.69 3.32 4.767 8.127 5.263.152.016.303.03.455.04a12.165 12.165 0 0 0 2.177.2c.781 0 1.542-.069 2.275-.2.153-.014.306-.027.46-.043 4.807-.496 8.127-2.573 8.127-5.263 0-1.298-.895-2.997-2.762-4.564a12.1 12.1 0 0 0-.938-.72c.2-.888.334-1.731.39-2.51.154-2.147-.437-3.608-1.722-4.198a1.908 1.908 0 0 0-.838-.174zm0 1.476c.093 0 .172.013.236.04.5.218.845.935.75 2.262-.04.55-.144 1.16-.28 1.813a17.47 17.47 0 0 0-3.398-.907 17.47 17.47 0 0 0-2.086-2.575c1.462-1.34 2.87-2.133 3.778-2.133zm-9.775 0c.908 0 2.315.793 3.778 2.133a17.5 17.5 0 0 0-2.086 2.575 17.47 17.47 0 0 0-3.398.907c-.136-.653-.24-1.263-.28-1.813-.095-1.327.25-2.044.75-2.262a.477.477 0 0 1 .236-.04zm4.887 3.3c.484.49.94 1.015 1.367 1.568a20.59 20.59 0 0 0-2.734 0 16.03 16.03 0 0 1 1.367-1.568zM12 14.096a1.91 1.91 0 1 0 0-3.82 1.91 1.91 0 0 0 0 3.82z"/></svg>
+                    </div>
+                    <h3>React</h3>
+                    <p>Masih belajar, tapi lumayan</p>
+                    <div class="skill-bar"><div class="skill-fill" style="--fill: 60%; --accent: #61dafb;"></div></div>
+                </div>
+                <div class="skill-card glass-card animate-on-scroll">
+                    <div class="skill-icon" style="--accent: #68a063;">
+                        <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor"><path d="M11.998 24c-.321 0-.627-.165-.806-.441l-2.625-3.892c-.096-.144-.193-.3-.288-.462l-.043-.075-.014-.024c-.708-1.188-1.446-2.413-1.446-4.23 0-2.48 1.62-4.344 3.977-4.86l.155-.033V2.448C10.908 1.097 11.008 0 12.014 0c.558 0 .893.254 1.062.47.18.23.252.506.252.72v5.088l.093-.006a5.626 5.626 0 0 1 4.41 1.795A5.579 5.579 0 0 1 19.34 12c0 1.524-.567 2.958-1.418 4.248L15.3 20.54l-2.496 3.022c-.179.22-.441.345-.72.438H11.998zM12 12c-1.766 0-2.52 1.166-2.52 2.876 0 1.226.543 2.142 1.2 3.25l.097.163 1.227 1.82 1.32-1.599.122-.195c.67-1.087 1.2-2.005 1.2-3.29 0-.93-.304-1.59-.887-2.148A3.123 3.123 0 0 0 12.36 12H12z"/></svg>
+                    </div>
+                    <h3>Node.js</h3>
+                    <p>Backend-an dikit</p>
+                    <div class="skill-bar"><div class="skill-fill" style="--fill: 55%; --accent: #68a063;"></div></div>
+                </div>
+                <div class="skill-card glass-card animate-on-scroll">
+                    <div class="skill-icon" style="--accent: #a259ff;">
+                        <svg viewBox="0 0 24 24" width="32" height="32" fill="currentColor"><path d="M15.852 8.981h-4.588V0h4.588c2.476 0 4.49 2.014 4.49 4.49s-2.014 4.491-4.49 4.491zM12.735 7.51h3.117a3.018 3.018 0 0 0 3.019-3.019 3.018 3.018 0 0 0-3.019-3.019h-3.117V7.51zm-1.471 1.471H7.676c-2.476 0-4.49-2.014-4.49-4.49S5.2 0 7.676 0h3.588v8.981zm-3.588-7.51a3.018 3.018 0 0 0-3.019 3.019 3.018 3.018 0 0 0 3.019 3.019h3.117V1.471H7.676zm3.588 15.058H7.676c-2.476 0-4.49-2.014-4.49-4.49s2.014-4.49 4.49-4.49h3.588v8.98zM7.676 9.019a3.019 3.019 0 0 0 0 6.038h3.117V9.019H7.676zm4.588 7.51h-.001v4.49c0 2.476 2.014 4.49 4.49 4.49s4.49-2.014 4.49-4.49-2.014-4.49-4.49-4.49h-4.489zm4.489 7.51a3.018 3.018 0 0 1-3.018-3.019 3.018 3.018 0 0 1 3.018-3.019 3.018 3.018 0 0 1 3.019 3.019 3.018 3.018 0 0 1-3.019 3.019z"/></svg>
+                    </div>
+                    <h3>Figma</h3>
+                    <p>Buat desain sebelum ngoding</p>
+                    <div class="skill-bar"><div class="skill-fill" style="--fill: 70%; --accent: #a259ff;"></div></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- PROJECTS -->
+    <section class="section projects" id="projects">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <span class="section-tag">Projects</span>
+                <h2 class="section-title">Hasil <span class="text-gradient">ngoding</span></h2>
+                <p class="section-subtitle">Beberapa proyek yang udah saya kerjain. Ada yang rapi, ada yang masih WIP.</p>
+            </div>
+            <div class="projects-grid">
+                <article class="project-card glass-card animate-on-scroll">
+                    <div class="project-image">
+                        <div class="project-placeholder" style="--hue: 250;">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+                        </div>
+                        <div class="project-overlay">
+                            <a href="#" class="project-link" aria-label="Lihat proyek">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="project-info">
+                        <h3>Landing Page Toko</h3>
+                        <p>Landing page buat toko online temen. Responsive, ada form order juga. Proyek pertama yang beneran dipake orang.</p>
+                        <div class="project-tech">
+                            <span>HTML</span>
+                            <span>CSS</span>
+                            <span>JS</span>
+                        </div>
+                    </div>
+                </article>
+                <article class="project-card glass-card animate-on-scroll">
+                    <div class="project-image">
+                        <div class="project-placeholder" style="--hue: 170;">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+                        </div>
+                        <div class="project-overlay">
+                            <a href="#" class="project-link" aria-label="Lihat proyek">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="project-info">
+                        <h3>To-Do App</h3>
+                        <p>Aplikasi to-do list. Bisa tambah, hapus, tandai selesai. Simpel tapi belajar banyak soal DOM manipulation dari sini.</p>
+                        <div class="project-tech">
+                            <span>JavaScript</span>
+                            <span>LocalStorage</span>
+                        </div>
+                    </div>
+                </article>
+                <article class="project-card glass-card animate-on-scroll">
+                    <div class="project-image">
+                        <div class="project-placeholder" style="--hue: 340;">
+                            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+                        </div>
+                        <div class="project-overlay">
+                            <a href="#" class="project-link" aria-label="Lihat proyek">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="project-info">
+                        <h3>Weather App</h3>
+                        <p>Fetch data cuaca dari API, tampilin di UI yang lumayan rapi. Pertama kali belajar async/await dari sini.</p>
+                        <div class="project-tech">
+                            <span>API</span>
+                            <span>Fetch</span>
+                            <span>CSS Grid</span>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="section contact" id="contact">
+        <div class="container">
+            <div class="section-header animate-on-scroll">
+                <span class="section-tag">Contact</span>
+                <h2 class="section-title">Mau <span class="text-gradient">ngobrol?</span></h2>
+                <p class="section-subtitle">Bisa langsung DM di sosmed atau isi form di bawah. Santai aja.</p>
+            </div>
+            <div class="contact-grid">
+                <div class="contact-info animate-on-scroll">
+                    <div class="contact-item glass-card">
+                        <div class="contact-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                        </div>
+                        <div>
+                            <h4>Email</h4>
+                            <p>hello@email.com</p>
+                        </div>
+                    </div>
+                    <div class="contact-item glass-card">
+                        <div class="contact-icon">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                        </div>
+                        <div>
+                            <h4>Lokasi</h4>
+                            <p>Indonesia</p>
+                        </div>
+                    </div>
+                    <div class="contact-socials">
+                        <h4>Sosial Media</h4>
+                        <div class="contact-social-links">
+                            <a href="https://github.com/" target="_blank" rel="noopener noreferrer" class="contact-social-btn" aria-label="GitHub">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                                <span>GitHub</span>
+                            </a>
+                            <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" class="contact-social-btn" aria-label="Instagram">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+                                <span>Instagram</span>
+                            </a>
+                            <a href="https://tiktok.com/" target="_blank" rel="noopener noreferrer" class="contact-social-btn" aria-label="TikTok">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.96a8.27 8.27 0 0 0 4.87 1.56V7.08a4.83 4.83 0 0 1-1.11-.39z"/></svg>
+                                <span>TikTok</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <form class="contact-form glass-card animate-on-scroll" id="contactForm">
+                    <div class="form-group">
+                        <label for="name">Nama</label>
+                        <input type="text" id="name" name="name" placeholder="Siapa nih?" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="email@kamu.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="message">Pesan</label>
+                        <textarea id="message" name="message" rows="5" placeholder="Mau ngomong apa?" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">
+                        <span>Kirim</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container footer-content">
+            <div class="footer-brand">
+                <a href="#" class="nav-logo">
+                    <span class="logo-bracket">&lt;</span>Portfolio<span class="logo-bracket"> /&gt;</span>
+                </a>
+                <p>Masih belajar, tapi semangat.</p>
+            </div>
+            <div class="footer-socials">
+                <a href="https://github.com/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="GitHub">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12z"/></svg>
+                </a>
+                <a href="https://instagram.com/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Instagram">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+                </a>
+                <a href="https://tiktok.com/" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="TikTok">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1v-3.5a6.37 6.37 0 0 0-.79-.05A6.34 6.34 0 0 0 3.15 15a6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.34-6.34V8.96a8.27 8.27 0 0 0 4.87 1.56V7.08a4.83 4.83 0 0 1-1.11-.39z"/></svg>
+                </a>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 — dibuat sambil minum kopi</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+
+</body>
+</html>

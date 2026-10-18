@@ -73,400 +73,416 @@
           <span class="gps-dot-indicator" id="topGpsIndicator" title="GPS Default"></span>
         </button>
 
-        <!-- Ihtiyat Status Badge Pill -->
-        <div class="ihtiyat-pill" id="topIhtiyatBadge" title="Penyesuaian waktu pengaman hisab Kemenag RI (+2 Menit)">
-          <span class="ihtiyat-dot"></span>
-          <span id="topIhtiyatText">Ihtiyat +2m</span>
-        </div>
-
         <!-- Alarm Status Pill -->
         <button class="alarm-pill" id="topAlarmBtn" type="button" title="Pengaturan Alarm & Notifikasi Sholat">
           <span class="alarm-bell-icon" id="topAlarmIcon">🔔</span>
           <span id="topAlarmText">Alarm Aktif</span>
         </button>
-
-        <!-- Open Settings Drawer Button -->
-        <button class="btn-config-pill" id="btnToggleSleepConfig" type="button">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-          <span id="btnToggleSleepConfigText">Pengaturan Waktu</span>
-        </button>
       </div>
     </header>
+    <!-- ===== MODERN SEGMENTED TABS NAV ===== -->
+    <div class="tabs-nav-container">
+      <nav class="mizan-tabs-nav" role="tablist" aria-label="Navigasi Utama Mizan">
+        <button type="button" class="tab-nav-btn is-active" data-view="prayers" role="tab" aria-selected="true" id="tabBtnPrayers">
+          <span class="tab-nav-icon">🕌</span>
+          <span class="tab-nav-label">Jadwal Sholat</span>
+        </button>
+        <button type="button" class="tab-nav-btn" data-view="productivity" role="tab" aria-selected="false" id="tabBtnProductivity">
+          <span class="tab-nav-icon">📅</span>
+          <span class="tab-nav-label">Agenda Produktif</span>
+          <span class="tab-nav-badge" id="tabProductivityBadge">Alur Hari</span>
+        </button>
+        <button type="button" class="tab-nav-btn" data-view="settings" role="tab" aria-selected="false" id="tabBtnSettings">
+          <span class="tab-nav-icon">⚙️</span>
+          <span class="tab-nav-label">Pengaturan</span>
+        </button>
+      </nav>
+    </div>
 
-    <!-- ===== BENTO GRID DASHBOARD ===== -->
-    <div class="bento-grid">
-      <!-- 1. HERO CARD -->
-      <div class="bento-card bento-card--hero" id="bentoHeroCard">
-        <div class="bento-hero__arabic" id="heroArabicCalligraphy">الظهر</div>
-        <div class="bento-hero__header">
-          <div class="bento-tag"><span class="pulse-dot"></span> BERIKUTNYA</div>
-          <div class="bento-hero__clock" id="clockTime">--:--:--</div>
+
+    <!-- ===== TAB 1: JADWAL SHOLAT (ZEN & MINIMALIST) ===== -->
+    <div class="view-pane is-active" id="panePrayers">
+      <!-- 1. HERO SHOLAT UTAMA & WAKTU -->
+      <div class="bento-grid bento-grid--prayers-view">
+        <div class="bento-card bento-card--hero" id="bentoHeroCard">
+          <div class="bento-hero__arabic" id="heroArabicCalligraphy">الظهر</div>
+          <div class="bento-hero__top">
+            <span class="bento-tag bento-tag--live"><span class="pulse-dot"></span> WAKTU SHOLAT BERIKUTNYA</span>
+            <div class="bento-hero__clock" id="clockTime">--:--:-- WITA</div>
+          </div>
+          
+          <div class="bento-hero__main">
+            <div class="bento-hero__prayer-info">
+              <span class="bento-hero__icon" id="heroIcon">☀️</span>
+              <div>
+                <h2 class="bento-hero__name" id="heroPrayerName">Memuat...</h2>
+                <div class="bento-hero__adzan">Adzan Pukul <strong id="heroAdzanTime">--:--</strong></div>
+              </div>
+            </div>
+            
+            <div class="bento-hero__countdown-wrap">
+              <div class="bento-hero__countdown-label">Menuju Waktu Sholat</div>
+              <div class="bento-hero__countdown" id="heroCountdownTimer">--j --m --d</div>
+            </div>
+          </div>
+
+          <div class="bento-hero__footer">
+            <div class="bento-hero__timeline-chips">
+              <div class="hero-chip">
+                <span class="hero-chip__icon">⏱️</span>
+                <span>Iqomah: <strong id="heroIqomahTime">--:--</strong></span>
+              </div>
+              <div class="hero-chip">
+                <span class="hero-chip__icon">🚶</span>
+                <span>Berangkat: <strong id="heroDepartTime">--:--</strong></span>
+              </div>
+            </div>
+            <div class="bento-hero__progress">
+              <div class="bento-hero__progress-bar" id="heroProgressBar" style="width: 45%;"></div>
+            </div>
+          </div>
         </div>
 
-        <div class="bento-hero__body">
-          <div class="bento-hero__prayer-info">
-            <span class="bento-hero__icon" id="heroIcon">☀️</span>
-            <div>
-              <div class="bento-hero__name" id="heroPrayerName">Dzuhur</div>
-              <div class="bento-hero__adzan" id="heroAdzanTime">--:-- WITA</div>
+        <!-- 2. BENTO SLEEP QUALITY SUMMARY -->
+        <div class="bento-card bento-card--sleep" id="bentoSleepCard">
+          <div class="bento-card__header">
+            <div class="bento-card__title-wrap">
+              <span class="bento-card__icon">🌙</span>
+              <span class="bento-card__title">Waktu Istirahat Tidur</span>
             </div>
+            <span class="badge-mini-tag badge-mini-tag--green" id="sleepQualityBadge">Ideal</span>
           </div>
 
-          <div class="bento-hero__timer-box">
-            <div class="bento-hero__countdown" id="heroCountdownTimer">--m --s</div>
-            <div class="bento-hero__countdown-sub">WAKTU TERSISA</div>
-          </div>
-        </div>
-
-        <div class="bento-hero__footer">
-          <div class="bento-pill-group">
-            <div class="bento-pill">
-              <span class="pill-lbl">⏱️ Iqomah</span>
-              <span class="pill-val pill-val--green" id="heroIqomahTime">--:--</span>
+          <div class="bento-sleep__times">
+            <div class="sleep-time-col">
+              <div class="sleep-time-col__label">Tidur Malam</div>
+              <div class="sleep-time-col__val" id="sleepTimeDisplay">--:--</div>
+              <div class="sleep-time-col__hint" id="sleepTimeHint">Pasca Isya</div>
             </div>
-            <div class="bento-pill">
-              <span class="pill-lbl">🚶 Berangkat Maks</span>
-              <span class="pill-val pill-val--cyan" id="heroDepartTime">--:--</span>
+            <div class="sleep-time-divider">
+              <span id="sleepDurationDisplay">--j --m</span>
             </div>
-          </div>
-          <div class="bento-hero__progress-wrap">
-            <div class="bento-hero__progress-bar" id="heroProgressBar" style="width: 50%;"></div>
+            <div class="sleep-time-col">
+              <div class="sleep-time-col__label">Bangun Pagi</div>
+              <div class="sleep-time-col__val" id="wakeTimeDisplay">--:--</div>
+              <div class="sleep-time-col__hint" id="wakeTimeHint">Jelang Subuh</div>
+            </div>
           </div>
         </div>
       </div>
 
-      <!-- 2. SLEEP & RECHARGE CARD -->
-      <div class="bento-card bento-card--sleep">
-        <div class="bento-card__title-row">
-          <div class="bento-card__label">🛏️ TIDUR & PEMULIHAN</div>
-          <span class="badge-status-pill" id="sleepQualityBadge">Memeriksa...</span>
-        </div>
-
-        <div class="sleep-metrics-row">
-          <div class="sleep-metric">
-            <span class="metric-lbl">Tidur Malam</span>
-            <span class="metric-val" id="sleepTimeDisplay">--:--</span>
-            <span class="metric-hint" id="sleepTimeHint">Pasca Isya</span>
-          </div>
-          <div class="sleep-metric sleep-metric--divider">
-            <span class="metric-lbl">Total Istirahat</span>
-            <span class="metric-val metric-val--highlight" id="sleepDurationDisplay">-- jam -- mnt</span>
-            <span class="metric-hint">Target 7–8 Jam</span>
-          </div>
-          <div class="sleep-metric">
-            <span class="metric-lbl">Bangun Pagi</span>
-            <span class="metric-val" id="wakeTimeDisplay">--:--</span>
-            <span class="metric-hint" id="wakeTimeHint">Jelang Subuh</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- 3. CALENDAR & HIJRI CARD -->
-      <div class="bento-card bento-card--date">
-        <div class="bento-card__title-row">
-          <div class="bento-card__label">📅 KALENDER HARI INI</div>
-          <span class="badge-mini-tag" id="calendarSourceTag">Kemenag RI</span>
-        </div>
-        <div class="dates-content" id="headerDates">
-          <span class="date-skeleton"></span>
-        </div>
-      </div>
-
-      <!-- 4. STUDY & PRODUCTIVITY CARD -->
-      <div class="bento-card bento-card--study">
-        <div class="bento-card__title-row">
-          <div class="bento-card__label">📚 PRODUKTIVITAS BELAJAR</div>
-          <span class="badge-mini-tag badge-mini-tag--amber">Terjadwal</span>
-        </div>
-        <div class="study-stats-grid">
+      <!-- 3. KARTU JADWAL SHOLAT 5 WAKTU (BERSIH & ELEGAN) -->
+      <section class="section section--prayer-cards">
+        <div class="section__header">
           <div>
-            <div class="study-stats-num" id="summaryStudyHours">--</div>
-            <div class="study-stats-lbl">Total Jam Belajar</div>
+            <h2 class="section__title">Jadwal Sholat 5 Waktu</h2>
+            <p class="section__subtitle" id="sectionPrayerSubtitle">Waktu adzan akurat berdasarkan GPS & standar Ihtiyat Kemenag RI (+2m)</p>
           </div>
+          <div class="section__legend">
+            <span class="legend-dot legend-dot--green"></span> <span>Iqomah</span>
+            <span class="legend-dot legend-dot--cyan"></span> <span>Berangkat</span>
+          </div>
+        </div>
+
+        <div class="prayer-grid" id="prayerGrid">
+          <div class="loading-state" id="loadingState">
+            <div class="spinner"></div>
+            <p>Memuat jadwal sholat...</p>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ===== TAB 2: AGENDA & PRODUKTIVITAS (KHUSUS BELAJAR & TIMELINE) ===== -->
+    <div class="view-pane is-hidden" id="paneProductivity">
+      <!-- CALENDAR HEADER & METRICS -->
+      <div class="productivity-top-bar">
+        <div class="calendar-pill" id="calendarSourceTag">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+          <span id="headerDates">Kalender Harian</span>
+        </div>
+      </div>
+
+      <div class="productivity-stats-grid">
+        <div class="stat-mini-card">
+          <span class="stat-mini-icon">📚</span>
           <div>
-            <div class="study-stats-num" id="summaryStudySessions">--</div>
-            <div class="study-stats-lbl">Sesi Belajar Hari Ini</div>
+            <div class="stat-mini-val" id="summaryStudyHours">0j 00m</div>
+            <div class="stat-mini-label">Total Belajar Terjadwal</div>
+          </div>
+        </div>
+        <div class="stat-mini-card">
+          <span class="stat-mini-icon">🎯</span>
+          <div>
+            <div class="stat-mini-val" id="summaryStudySessions">0 Sesi</div>
+            <div class="stat-mini-label">Sesi Belajar Aktif</div>
+          </div>
+        </div>
+        <div class="stat-mini-card">
+          <span class="stat-mini-icon">⚖️</span>
+          <div>
+            <div class="stat-mini-val" id="summaryBalanceStatus">Seimbang</div>
+            <div class="stat-mini-label">Keseimbangan Ibadah & Kuliah</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIMELINE AGENDA 24 JAM -->
+      <section class="section" id="scheduleSection">
+        <div class="section__header">
+          <div>
+            <h2 class="section__title">Alur & Agenda Harian</h2>
+            <p class="section__subtitle">Alur waktu terpadu antara ibadah sholat, waktu belajar produktif, dan istirahat tidur</p>
+          </div>
+          <div class="filter-pills" id="scheduleFilter">
+            <button class="filter-pill is-active" data-filter="all" type="button">Semua</button>
+            <button class="filter-pill" data-filter="prayer" type="button">🕌 Sholat</button>
+            <button class="filter-pill" data-filter="study" type="button">📚 Belajar</button>
+            <button class="filter-pill" data-filter="sleep" type="button">🌙 Istirahat</button>
+          </div>
+        </div>
+
+        <div class="timeline" id="timeline"></div>
+      </section>
+    </div>
+
+    <!-- ===== TAB 3: PENGATURAN CERDAS (TERSTRUKTUR & RAPI) ===== -->
+    <div class="view-pane is-hidden" id="paneSettings">
+      <div class="settings-page-header">
+        <h2>⚙️ Pengaturan Cerdas Mizan</h2>
+        <p>Atur titik koordinat GPS, standar akurasi hisab Kemenag RI, alarm audio adzan, serta durasi istirahat tidur.</p>
+      </div>
+
+      <!-- SECTION 1: LOKASI & IHTIYAT -->
+      <div class="settings-group-card">
+        <div class="settings-group-title">
+          <span>📍 Lokasi GPS & Akurasi Hisab Sholat</span>
+        </div>
+        <div class="config-grid config-grid--location">
+          <!-- GPS Card -->
+          <div class="config-box config-box--location">
+            <div class="smart-box__header">
+              <span class="smart-box__title">📡 Titik Koordinat & Lokasi</span>
+              <span class="badge-mini-tag badge-mini-tag--green" id="gpsBadge">Default Banjarbaru</span>
+            </div>
+            <div class="location-status-row">
+              <div class="location-current-name" id="drawerLocationName">Landasan Ulin, Banjarbaru</div>
+              <div class="location-coords" id="drawerLocationCoords">Lat: -3.4414 • Lon: 114.8430 (WITA)</div>
+            </div>
+            <div class="gps-btn-group">
+              <button type="button" class="btn-gps" id="btnDetectGps">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="7"/></svg>
+                <span id="btnDetectGpsText">Gunakan Lokasi GPS Saya</span>
+              </button>
+              <button type="button" class="btn-gps-reset" id="btnResetLocation" title="Kembalikan ke Banjarbaru">
+                🔄 Reset
+              </button>
+            </div>
+            <div class="gps-feedback is-hidden" id="gpsFeedback"></div>
+            <div class="privacy-note">
+              <span class="privacy-note__icon">🔒</span>
+              <span><strong>Privasi Terjamin:</strong> Koordinat diproses 100% lokal di browser Anda. Tidak ada data lokasi yang dikirim atau disimpan di server luar.</span>
+            </div>
+          </div>
+
+          <!-- Ihtiyat Kemenag Card -->
+          <div class="config-box config-box--ihtiyat">
+            <div class="smart-box__header">
+              <span class="smart-box__title">🛡️ Pengaman Ihtiyat Kemenag RI</span>
+              <label class="switch-toggle" title="Aktifkan/Nonaktifkan Ihtiyat +2 Menit">
+                <input type="checkbox" id="toggleIhtiyat" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+            <div class="reciprocal-label" id="ihtiyatReciprocalLabel">
+              ✅ +2 Menit Standar Masjid Kemenag RI
+            </div>
+            <p class="ihtiyat-desc">
+              Kemenag RI menambahkan +2 menit pengaman hisab agar waktu adzan di website <strong>100% cocok dengan jam dinding masjid</strong> setempat.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 2: AUDIO ADZAN & ALARM NOTIFIKASI -->
+      <div class="settings-group-card" id="drawerAlarmSection">
+        <div class="settings-group-title">
+          <span>🔔 Audio Adzan & Alarm Notifikasi Layar</span>
+        </div>
+        <div class="config-grid config-grid--alarm">
+          <!-- Master Audio Card -->
+          <div class="config-box config-box--alarm-audio">
+            <div class="smart-box__header">
+              <span class="smart-box__title">🔊 Suara Pengingat & Notifikasi</span>
+              <label class="switch-toggle" title="Aktifkan/Nonaktifkan Pengingat Suara">
+                <input type="checkbox" id="toggleAlarmMaster" checked>
+                <span class="slider"></span>
+              </label>
+            </div>
+
+            <div class="alarm-controls-grid">
+              <div class="alarm-control-item">
+                <label for="alarmSoundSelect" class="alarm-label">Pilihan Nada:</label>
+                <select id="alarmSoundSelect" class="alarm-select">
+                  <option value="adhan_melody">🕌 Harmoni Melodi Adzan (Maqam Hijaz)</option>
+                  <option value="soft_chime">✨ Genta / Chime Islami Lembut</option>
+                  <option value="beep_alert">⏰ Beep Nada Modern</option>
+                </select>
+              </div>
+
+              <div class="alarm-control-item">
+                <div class="alarm-vol-header">
+                  <label for="alarmVolumeSlider" class="alarm-label">Volume:</label>
+                  <span class="volume-val" id="alarmVolumeValue">80%</span>
+                </div>
+                <div class="alarm-volume-slider-wrap">
+                  <span class="vol-icon">🔉</span>
+                  <input type="range" id="alarmVolumeSlider" min="0" max="100" value="80" class="alarm-slider">
+                  <span class="vol-icon">🔊</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="alarm-actions-row">
+              <button type="button" class="btn-test-sound" id="btnTestSound">
+                <span id="btnTestSoundIcon">▶</span>
+                <span id="btnTestSoundText">Uji Coba Suara</span>
+              </button>
+              <button type="button" class="btn-permission-notif" id="btnRequestNotifPermission">
+                <span id="notifBtnIcon">🔔</span>
+                <span id="notifBtnText">Aktifkan Notifikasi Layar</span>
+              </button>
+            </div>
+            <div class="notif-status-badge" id="notifStatusBadge">
+              Notifikasi browser berdering saat tab berada di latar belakang
+            </div>
+          </div>
+
+          <!-- Per-Prayer Selection Card -->
+          <div class="config-box config-box--alarm-prayers">
+            <div class="smart-box__header">
+              <span class="smart-box__title">⏱️ Waktu Sholat yang Diingatkan</span>
+            </div>
+
+            <div class="early-reminder-toggle-wrap">
+              <label class="early-reminder-label">
+                <input type="checkbox" id="toggleEarlyReminder" checked>
+                <span>Ingatkan <strong>10 menit sebelum</strong> waktu adzan tiba (Bersiap-siap)</span>
+              </label>
+            </div>
+
+            <div class="alarm-chips-legend">Pilih sholat aktif:</div>
+            <div class="prayer-alarm-chips" id="prayerAlarmChips">
+              <label class="alarm-chip is-active" data-prayer="fajr">
+                <input type="checkbox" id="alarmPrayer_fajr" checked>
+                <span class="chip-dot"></span>
+                <span class="chip-name">Subuh</span>
+              </label>
+              <label class="alarm-chip is-active" data-prayer="dhuhr">
+                <input type="checkbox" id="alarmPrayer_dhuhr" checked>
+                <span class="chip-dot"></span>
+                <span class="chip-name">Dzuhur</span>
+              </label>
+              <label class="alarm-chip is-active" data-prayer="asr">
+                <input type="checkbox" id="alarmPrayer_asr" checked>
+                <span class="chip-dot"></span>
+                <span class="chip-name">Ashar</span>
+              </label>
+              <label class="alarm-chip is-active" data-prayer="maghrib">
+                <input type="checkbox" id="alarmPrayer_maghrib" checked>
+                <span class="chip-dot"></span>
+                <span class="chip-name">Maghrib</span>
+              </label>
+              <label class="alarm-chip is-active" data-prayer="isha">
+                <input type="checkbox" id="alarmPrayer_isha" checked>
+                <span class="chip-dot"></span>
+                <span class="chip-name">Isya</span>
+              </label>
+            </div>
+
+            <div class="alarm-hint-box">
+              <span>💡</span>
+              <span>Alarm layar & suara akan muncul otomatis begitu jam perangkat mencapai jadwal sholat yang aktif.</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SECTION 3: WAKTU ISTIRAHAT & PERJALANAN MASJID -->
+      <div class="settings-group-card">
+        <div class="settings-group-title">
+          <span>⏰ Jam Istirahat & Berangkat ke Masjid</span>
+        </div>
+        <div class="config-grid">
+          <!-- Mulai Tidur Pasca Isya -->
+          <div class="config-box config-box--smart" id="smartSleepInputBox">
+            <div class="smart-box__header">
+              <span class="smart-box__title">🌙 Mulai Tidur Malam</span>
+              <div class="smart-toggle-pill">
+                <button type="button" class="btn-mode is-active" data-smart="sleep" data-mode="minute">Menit</button>
+                <button type="button" class="btn-mode" data-smart="sleep" data-mode="time">Jam</button>
+              </div>
+            </div>
+
+            <div class="reciprocal-label" id="sleepReciprocalLabel">
+              ⏰ Jam 20:22 WITA
+            </div>
+
+            <div class="smart-input-container">
+              <div class="input-unit-wrap input-unit-wrap--minute" id="sleepInputMinuteWrap">
+                <input type="number" id="sleepAfterIshaInput" min="0" max="360" value="60">
+                <span>menit pasca Isya</span>
+              </div>
+              <div class="input-unit-wrap input-unit-wrap--time is-hidden" id="sleepInputTimeWrap">
+                <input type="time" id="sleepTargetTimeInput" value="20:22">
+                <span>target jam tidur</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bangun Sebelum Subuh -->
+          <div class="config-box config-box--smart" id="smartWakeInputBox">
+            <div class="smart-box__header">
+              <span class="smart-box__title">⏰ Bangun Pagi / Subuh</span>
+              <div class="smart-toggle-pill">
+                <button type="button" class="btn-mode is-active" data-smart="wake" data-mode="minute">Menit</button>
+                <button type="button" class="btn-mode" data-smart="wake" data-mode="time">Jam</button>
+              </div>
+            </div>
+
+            <div class="reciprocal-label" id="wakeReciprocalLabel">
+              ⏰ Jam 04:13 WITA
+            </div>
+
+            <div class="smart-input-container">
+              <div class="input-unit-wrap input-unit-wrap--minute" id="wakeInputMinuteWrap">
+                <input type="number" id="wakeBeforeFajrInput" min="0" max="240" value="30">
+                <span>menit jelang Subuh</span>
+              </div>
+              <div class="input-unit-wrap input-unit-wrap--time is-hidden" id="wakeInputTimeWrap">
+                <input type="time" id="wakeTargetTimeInput" value="04:13">
+                <span>target jam bangun</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Waktu Jalan ke Masjid -->
+          <div class="config-box">
+            <div class="smart-box__header">
+              <span class="smart-box__title">🚶 Waktu Jalan ke Masjid</span>
+            </div>
+            <div class="reciprocal-label">
+              Digunakan untuk estimasi batas berangkat
+            </div>
+            <div class="input-unit-wrap">
+              <input type="number" id="globalTravelInput" min="1" max="60" value="5">
+              <span>menit perjalanan</span>
+            </div>
           </div>
         </div>
       </div>
     </div>
-
-    <!-- ===== EXPANDABLE SETTINGS DRAWER ===== -->
-    <div class="config-drawer is-hidden" id="sleepConfigPanel">
-      <div class="drawer-header">
-        <div>
-          <h3>⚙️ Pengaturan Cerdas: Lokasi, Waktu & Masjid</h3>
-          <p>Deteksi GPS otomatis, koreksi standar Ihtiyat Kemenag RI, serta mode input Jam ⇄ Menit</p>
-        </div>
-      </div>
-
-      <!-- ROW 1: GPS LOCATION & IHTIYAT ACCURACY -->
-      <div class="drawer-section-title">📍 Lokasi GPS & Akurasi Hisab Sholat</div>
-      <div class="config-grid config-grid--location">
-        <!-- 1. GPS Card -->
-        <div class="config-box config-box--location">
-          <div class="smart-box__header">
-            <span class="smart-box__title">📡 Titik Koordinat & Lokasi</span>
-            <span class="badge-mini-tag badge-mini-tag--green" id="gpsBadge">Default Banjarbaru</span>
-          </div>
-          <div class="location-status-row">
-            <div class="location-current-name" id="drawerLocationName">Landasan Ulin, Banjarbaru</div>
-            <div class="location-coords" id="drawerLocationCoords">Lat: -3.4414 • Lon: 114.8430 (WITA)</div>
-          </div>
-          <div class="gps-btn-group">
-            <button type="button" class="btn-gps" id="btnDetectGps">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="7"/></svg>
-              <span id="btnDetectGpsText">Gunakan Lokasi GPS Saya</span>
-            </button>
-            <button type="button" class="btn-gps-reset" id="btnResetLocation" title="Kembalikan ke Banjarbaru">
-              🔄 Reset
-            </button>
-          </div>
-          <div class="gps-feedback is-hidden" id="gpsFeedback"></div>
-          <div class="privacy-note">
-            <span class="privacy-note__icon">🔒</span>
-            <span><strong>Privasi Terjamin:</strong> Koordinat diproses 100% lokal di browser Anda. Tidak ada data lokasi yang dikirim atau disimpan di server luar.</span>
-          </div>
-        </div>
-
-        <!-- 2. Ihtiyat Kemenag Card -->
-        <div class="config-box config-box--ihtiyat">
-          <div class="smart-box__header">
-            <span class="smart-box__title">🛡️ Pengaman Ihtiyat Kemenag RI</span>
-            <label class="switch-toggle" title="Aktifkan/Nonaktifkan Ihtiyat +2 Menit">
-              <input type="checkbox" id="toggleIhtiyat" checked>
-              <span class="slider"></span>
-            </label>
-          </div>
-          <div class="reciprocal-label" id="ihtiyatReciprocalLabel">
-            ✅ +2 Menit Standar Masjid Kemenag RI
-          </div>
-          <p class="ihtiyat-desc">
-            Kemenag RI menambahkan +2 menit pengaman hisab agar waktu adzan di website <strong>100% cocok dengan jam dinding masjid</strong> setempat.
-          </p>
-        </div>
-      </div>
-
-      <!-- ROW 2: SMART SLEEP & TRAVEL INPUTS -->
-      <div class="drawer-section-title" style="margin-top: 1.25rem;">⏰ Waktu Istirahat & Berangkat Masjid</div>
-      <div class="config-grid">
-        <!-- 3. Smart Input: Tidur Pasca Isya -->
-        <div class="config-box config-box--smart" id="smartSleepInputBox">
-          <div class="smart-box__header">
-            <span class="smart-box__title">🌙 Mulai Tidur Malam</span>
-            <div class="smart-toggle-pill">
-              <button type="button" class="btn-mode is-active" data-smart="sleep" data-mode="minute">Menit</button>
-              <button type="button" class="btn-mode" data-smart="sleep" data-mode="time">Jam</button>
-            </div>
-          </div>
-
-          <div class="reciprocal-label" id="sleepReciprocalLabel">
-            ⏰ Jam 20:22 WITA
-          </div>
-
-          <div class="smart-input-container">
-            <div class="input-unit-wrap input-unit-wrap--minute" id="sleepInputMinuteWrap">
-              <input type="number" id="sleepAfterIshaInput" min="0" max="360" value="60">
-              <span>menit pasca Isya</span>
-            </div>
-            <div class="input-unit-wrap input-unit-wrap--time is-hidden" id="sleepInputTimeWrap">
-              <input type="time" id="sleepTargetTimeInput" value="20:22">
-              <span>target jam tidur</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 4. Smart Input: Bangun Sebelum Subuh -->
-        <div class="config-box config-box--smart" id="smartWakeInputBox">
-          <div class="smart-box__header">
-            <span class="smart-box__title">⏰ Bangun Pagi / Subuh</span>
-            <div class="smart-toggle-pill">
-              <button type="button" class="btn-mode is-active" data-smart="wake" data-mode="minute">Menit</button>
-              <button type="button" class="btn-mode" data-smart="wake" data-mode="time">Jam</button>
-            </div>
-          </div>
-
-          <div class="reciprocal-label" id="wakeReciprocalLabel">
-            ⏰ Jam 04:13 WITA
-          </div>
-
-          <div class="smart-input-container">
-            <div class="input-unit-wrap input-unit-wrap--minute" id="wakeInputMinuteWrap">
-              <input type="number" id="wakeBeforeFajrInput" min="0" max="240" value="30">
-              <span>menit jelang Subuh</span>
-            </div>
-            <div class="input-unit-wrap input-unit-wrap--time is-hidden" id="wakeInputTimeWrap">
-              <input type="time" id="wakeTargetTimeInput" value="04:13">
-              <span>target jam bangun</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- 5. Regular Input: Waktu Jalan ke Masjid -->
-        <div class="config-box">
-          <div class="smart-box__header">
-            <span class="smart-box__title">🚶 Waktu Jalan ke Masjid</span>
-          </div>
-          <div class="reciprocal-label">
-            Digunakan untuk batas waktu berangkat
-          </div>
-          <div class="input-unit-wrap">
-            <input type="number" id="globalTravelInput" min="1" max="60" value="5">
-            <span>menit perjalanan</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- ROW 3: ALARM & AUDIO PRAYER NOTIFICATION -->
-      <div class="drawer-section-title" id="drawerAlarmSection" style="margin-top: 1.25rem;">🔔 Alarm & Audio Pengingat Waktu Sholat</div>
-      <div class="config-grid config-grid--alarm">
-        <!-- Card 1: Sound & Notification Controls -->
-        <div class="config-box config-box--alarm-audio">
-          <div class="smart-box__header">
-            <span class="smart-box__title">🔊 Suara Pengingat & Notifikasi</span>
-            <label class="switch-toggle" title="Aktifkan/Nonaktifkan Pengingat Suara">
-              <input type="checkbox" id="toggleAlarmMaster" checked>
-              <span class="slider"></span>
-            </label>
-          </div>
-
-          <div class="alarm-controls-grid">
-            <div class="alarm-control-item">
-              <label for="alarmSoundSelect" class="alarm-label">Pilihan Nada:</label>
-              <select id="alarmSoundSelect" class="alarm-select">
-                <option value="adhan_melody">🕌 Harmoni Melodi Adzan (Maqam Hijaz)</option>
-                <option value="soft_chime">✨ Genta / Chime Islami Lembut</option>
-                <option value="beep_alert">⏰ Beep Nada Modern</option>
-              </select>
-            </div>
-
-            <div class="alarm-control-item">
-              <div class="alarm-vol-header">
-                <label for="alarmVolumeSlider" class="alarm-label">Volume:</label>
-                <span class="volume-val" id="alarmVolumeValue">80%</span>
-              </div>
-              <div class="alarm-volume-slider-wrap">
-                <span class="vol-icon">🔉</span>
-                <input type="range" id="alarmVolumeSlider" min="0" max="100" value="80" class="alarm-slider">
-                <span class="vol-icon">🔊</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="alarm-actions-row">
-            <button type="button" class="btn-test-sound" id="btnTestSound">
-              <span id="btnTestSoundIcon">▶</span>
-              <span id="btnTestSoundText">Uji Coba Suara</span>
-            </button>
-            <button type="button" class="btn-permission-notif" id="btnRequestNotifPermission">
-              <span id="notifBtnIcon">🔔</span>
-              <span id="notifBtnText">Aktifkan Notifikasi Layar</span>
-            </button>
-          </div>
-          <div class="notif-status-badge" id="notifStatusBadge">
-            Notifikasi browser berdering saat tab berada di latar belakang
-          </div>
-        </div>
-
-        <!-- Card 2: Prayer Checkbox Chips & Early Reminder -->
-        <div class="config-box config-box--alarm-prayers">
-          <div class="smart-box__header">
-            <span class="smart-box__title">⏱️ Waktu Sholat yang Diingatkan</span>
-          </div>
-
-          <div class="early-reminder-toggle-wrap">
-            <label class="early-reminder-label">
-              <input type="checkbox" id="toggleEarlyReminder" checked>
-              <span>Ingatkan <strong>10 menit sebelum</strong> waktu adzan tiba (Bersiap-siap)</span>
-            </label>
-          </div>
-
-          <div class="alarm-chips-legend">Pilih sholat aktif:</div>
-          <div class="prayer-alarm-chips" id="prayerAlarmChips">
-            <label class="alarm-chip is-active" data-prayer="fajr">
-              <input type="checkbox" id="alarmPrayer_fajr" checked>
-              <span class="chip-dot"></span>
-              <span class="chip-name">Subuh</span>
-            </label>
-            <label class="alarm-chip is-active" data-prayer="dhuhr">
-              <input type="checkbox" id="alarmPrayer_dhuhr" checked>
-              <span class="chip-dot"></span>
-              <span class="chip-name">Dzuhur</span>
-            </label>
-            <label class="alarm-chip is-active" data-prayer="asr">
-              <input type="checkbox" id="alarmPrayer_asr" checked>
-              <span class="chip-dot"></span>
-              <span class="chip-name">Ashar</span>
-            </label>
-            <label class="alarm-chip is-active" data-prayer="maghrib">
-              <input type="checkbox" id="alarmPrayer_maghrib" checked>
-              <span class="chip-dot"></span>
-              <span class="chip-name">Maghrib</span>
-            </label>
-            <label class="alarm-chip is-active" data-prayer="isha">
-              <input type="checkbox" id="alarmPrayer_isha" checked>
-              <span class="chip-dot"></span>
-              <span class="chip-name">Isya</span>
-            </label>
-          </div>
-
-          <div class="alarm-hint-box">
-            <span>💡</span>
-            <span>Alarm layar & suara akan muncul otomatis begitu jam perangkat mencapai jadwal sholat yang aktif.</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ===== 5 PRAYER CARDS ===== -->
-    <section class="section">
-      <div class="section__header">
-        <div>
-          <h2 class="section__title">Jadwal Sholat 5 Waktu</h2>
-          <p class="section__subtitle" id="sectionPrayerSubtitle">Waktu adzan resmi, durasi iqomah masjid, dan estimasi waktu berangkat</p>
-        </div>
-        <div class="section__legend">
-          <span class="legend-dot legend-dot--green"></span> <span>Iqomah</span>
-          <span class="legend-dot legend-dot--cyan"></span> <span>Berangkat</span>
-        </div>
-      </div>
-
-      <div class="prayer-grid" id="prayerGrid">
-        <div class="loading-state" id="loadingState">
-          <div class="spinner"></div>
-          <p>Memuat jadwal sholat...</p>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== TIMELINE FEED ===== -->
-    <section class="section" id="scheduleSection" style="display:none;">
-      <div class="section__header">
-        <div>
-          <h2 class="section__title">Agenda & Alur Harian</h2>
-          <p class="section__subtitle">Urutan aktivitas berurutan dari subuh hingga istirahat malam</p>
-        </div>
-        <div class="filter-pill-bar" id="timelineFilter">
-          <button class="filter-pill is-active" data-filter="all">Semua</button>
-          <button class="filter-pill" data-filter="prayer">🕌 Masjid</button>
-          <button class="filter-pill" data-filter="study">📚 Belajar</button>
-          <button class="filter-pill" data-filter="sleep">🛏️ Istirahat</button>
-        </div>
-      </div>
-
-      <div class="timeline" id="timeline"></div>
-    </section>
-
-    <!-- ===== FOOTER ===== -->
-    <footer class="footer">
-      <p>Data hisab dari <a href="https://aladhan.com" target="_blank" rel="noopener">Aladhan API</a> • Diselaraskan dengan <span id="footerAccuracyText">Standar Ihtiyat Kemenag RI (+2 Menit)</span></p>
-      <p class="footer__note">Didesain dengan inspirasi <strong>Dribbble & Mobbin Bento Grid</strong></p>
-    </footer>
-  </div>
-
-  <script src="app.js"></script>
-
-  <!-- ===== FULLSCREEN GLASSMORPHISM ALARM MODAL ===== -->
+<!-- ===== FULLSCREEN GLASSMORPHISM ALARM MODAL ===== -->
   <div class="alarm-modal-backdrop is-hidden" id="alarmModal" role="dialog" aria-modal="true">
     <div class="alarm-modal-dialog">
       <div class="alarm-modal-glow"></div>
@@ -504,5 +520,78 @@
       </div>
     </div>
   </div>
+
+  <!-- ===== QUICK PRAYER EDIT MODAL ===== -->
+  <div class="prayer-edit-modal-backdrop is-hidden" id="prayerEditModal" role="dialog" aria-modal="true">
+    <div class="prayer-edit-dialog">
+      <div class="prayer-edit-header">
+        <div class="prayer-edit-title-group">
+          <span class="prayer-edit-icon" id="editModalIcon">🕌</span>
+          <div>
+            <h3 class="prayer-edit-title" id="editModalTitle">Atur Sholat Subuh</h3>
+            <div class="prayer-edit-subtitle" id="editModalSubtitle">Adzan Pukul 04:44 WITA</div>
+          </div>
+        </div>
+        <button type="button" class="btn-close-edit" id="btnCloseEditModal" aria-label="Tutup">✕</button>
+      </div>
+
+      <div class="prayer-edit-body">
+        <!-- 1. Iqomah Setting -->
+        <div class="edit-field-group">
+          <label class="edit-label">⏱️ Waktu Tunggu Iqomah Masjid:</label>
+          <div class="edit-input-row">
+            <input type="number" id="editPrayerIqomah" min="1" max="60" value="15">
+            <span>menit setelah adzan</span>
+          </div>
+        </div>
+
+        <!-- 2. Study Toggle & Settings -->
+        <div class="edit-field-group">
+          <div class="edit-study-header">
+            <label class="edit-label">📚 Sesi Belajar / Tugas Kuliah:</label>
+            <label class="switch-toggle">
+              <input type="checkbox" id="editPrayerStudyToggle" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="edit-study-container" id="editStudyContainer">
+            <div class="edit-mode-selector">
+              <span class="edit-sublabel">Atur waktu mulai belajar:</span>
+              <div class="smart-toggle-pill">
+                <button type="button" class="btn-mode is-active" id="editBtnModeMinute">Menit</button>
+                <button type="button" class="btn-mode" id="editBtnModeTime">Jam</button>
+              </div>
+            </div>
+
+            <div class="edit-input-row" id="editStudyMinuteRow">
+              <input type="number" id="editPrayerStudyOffset" min="0" max="300" value="30">
+              <span>menit setelah sholat</span>
+            </div>
+
+            <div class="edit-input-row is-hidden" id="editStudyTimeRow">
+              <input type="time" id="editPrayerStudyTargetTime" value="05:14">
+              <span>target jam mulai</span>
+            </div>
+
+            <div class="edit-field-group" style="margin-top: 0.75rem;">
+              <label class="edit-label">⏳ Durasi Belajar:</label>
+              <div class="edit-input-row">
+                <input type="number" id="editPrayerStudyDuration" min="15" max="480" step="15" value="120">
+                <span>menit (2 jam)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="prayer-edit-footer">
+        <button type="button" class="btn-save-edit" id="btnSaveEditModal">
+          ✅ Simpan Pengaturan
+        </button>
+      </div>
+    </div>
+  </div>
+
 </body>
 </html>

@@ -2196,3 +2196,535 @@ a:hover { opacity: .8; }
 .btn-alarm-dismiss:active {
   transform: scale(0.98);
 }
+
+
+/* =============================================
+   MODERN SEGMENTED TABS NAVIGATION & CLEAN VIEWS
+   ============================================= */
+
+/* 1. Tabs Navigation Bar */
+.tabs-nav-container {
+  display: flex;
+  justify-content: center;
+  margin: 0.75rem 0 1.5rem;
+  position: sticky;
+  top: 1rem;
+  z-index: 50;
+}
+
+.mizan-tabs-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.45rem;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 9999px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6), 0 0 15px rgba(245, 158, 11, 0.08);
+}
+
+.tab-nav-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.15rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 9999px;
+  color: #94a3b8;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.tab-nav-btn:hover {
+  color: #f1f5f9;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.tab-nav-btn.is-active {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.22), rgba(217, 119, 6, 0.32));
+  border-color: rgba(245, 158, 11, 0.45);
+  color: #fef08a;
+  box-shadow: 0 4px 14px -2px rgba(245, 158, 11, 0.3);
+}
+
+.tab-nav-icon {
+  font-size: 0.95rem;
+}
+
+.tab-nav-badge {
+  padding: 0.15rem 0.45rem;
+  background: rgba(245, 158, 11, 0.25);
+  border-radius: 9999px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #fbbf24;
+}
+
+/* 2. View Panes Transition */
+.view-pane {
+  display: block;
+  animation: viewFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.view-pane.is-hidden {
+  display: none !important;
+}
+
+@keyframes viewFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* 3. Prayers View Adjustments */
+.bento-grid--prayers-view {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.25rem;
+  margin-bottom: 2rem;
+}
+
+.bento-grid--prayers-view .bento-card--hero {
+  grid-column: 1 / 2;
+}
+
+.bento-grid--prayers-view .bento-card--sleep {
+  grid-column: 2 / 3;
+}
+
+@media (max-width: 900px) {
+  .bento-grid--prayers-view {
+    grid-template-columns: 1fr;
+  }
+  .bento-grid--prayers-view .bento-card--hero,
+  .bento-grid--prayers-view .bento-card--sleep {
+    grid-column: 1 / -1;
+  }
+}
+
+/* Clean Minimalist Prayer Cards */
+.prayer-card--clean {
+  background: rgba(18, 25, 38, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 20px;
+  padding: 1.35rem 1.15rem 1.15rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(16px);
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.prayer-card--clean:hover {
+  border-color: rgba(245, 158, 11, 0.35);
+  transform: translateY(-3px);
+  box-shadow: 0 12px 24px -6px rgba(0, 0, 0, 0.5), 0 0 20px -5px rgba(245, 158, 11, 0.12);
+}
+
+.prayer-card--clean.is-active {
+  background: linear-gradient(180deg, rgba(245, 158, 11, 0.10) 0%, rgba(18, 25, 38, 0.85) 100%);
+  border-color: rgba(245, 158, 11, 0.5);
+  box-shadow: 0 14px 30px -5px rgba(0, 0, 0, 0.6), 0 0 25px rgba(245, 158, 11, 0.22);
+}
+
+.prayer-card--clean .prayer-card__arabic-bg {
+  position: absolute;
+  top: -8px;
+  right: -5px;
+  font-family: 'Amiri', serif;
+  font-size: 4rem;
+  color: rgba(255, 255, 255, 0.03);
+  pointer-events: none;
+  line-height: 1;
+}
+
+.prayer-card--clean.is-active .prayer-card__arabic-bg {
+  color: rgba(245, 158, 11, 0.08);
+}
+
+.prayer-card__adzan-row {
+  margin: 0.85rem 0 1rem;
+  text-align: left;
+}
+
+.prayer-card__big-time {
+  font-size: 2.15rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.prayer-card--clean.is-active .prayer-card__big-time {
+  color: #fbbf24;
+  text-shadow: 0 0 20px rgba(245, 158, 11, 0.4);
+}
+
+.prayer-timing-pills {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.9rem;
+}
+
+.timing-pill-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.35rem 0.55rem;
+  background: rgba(10, 15, 26, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  font-size: 0.72rem;
+}
+
+.timing-pill-label {
+  color: #94a3b8;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.timing-pill-val {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.timing-pill-val--iqomah {
+  color: #34d399;
+}
+
+.timing-pill-val--depart {
+  color: #38bdf8;
+}
+
+.study-status-badge {
+  padding: 0.4rem 0.6rem;
+  background: rgba(245, 158, 11, 0.08);
+  border: 1px dashed rgba(245, 158, 11, 0.25);
+  border-radius: 8px;
+  font-size: 0.7rem;
+  color: #fde68a;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.85rem;
+}
+
+.study-status-badge.is-inactive {
+  background: rgba(255, 255, 255, 0.03);
+  border-color: rgba(255, 255, 255, 0.08);
+  color: #64748b;
+  border-style: solid;
+}
+
+.btn-card-edit {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 10px;
+  color: #cbd5e1;
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.btn-card-edit:hover {
+  background: rgba(245, 158, 11, 0.14);
+  border-color: rgba(245, 158, 11, 0.35);
+  color: #fef08a;
+}
+
+/* 4. Tab 2: Productivity Styles */
+.productivity-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.25rem;
+}
+
+.calendar-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(18, 25, 38, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #e2e8f0;
+}
+
+.calendar-pill svg {
+  color: #38bdf8;
+}
+
+.productivity-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.stat-mini-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1.15rem 1.25rem;
+  background: rgba(18, 25, 38, 0.75);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  backdrop-filter: blur(16px);
+}
+
+.stat-mini-icon {
+  font-size: 1.6rem;
+}
+
+.stat-mini-val {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #ffffff;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.2;
+}
+
+.stat-mini-label {
+  font-size: 0.72rem;
+  color: #94a3b8;
+}
+
+/* 5. Tab 3: Settings Page Styles */
+.settings-page-header {
+  margin-bottom: 1.75rem;
+}
+
+.settings-page-header h2 {
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 0.35rem;
+}
+
+.settings-page-header p {
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+.settings-group-card {
+  margin-bottom: 2rem;
+}
+
+.settings-group-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fef08a;
+  margin-bottom: 0.85rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* 6. Quick Prayer Edit Modal */
+.prayer-edit-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 10, 18, 0.82);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  animation: editModalFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.prayer-edit-modal-backdrop.is-hidden {
+  display: none !important;
+}
+
+@keyframes editModalFadeIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.prayer-edit-dialog {
+  max-width: 480px;
+  width: 100%;
+  background: #0f1728;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+  border-radius: 24px;
+  padding: 1.75rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.85), 0 0 35px rgba(245, 158, 11, 0.15);
+}
+
+.prayer-edit-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.prayer-edit-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.prayer-edit-icon {
+  font-size: 1.85rem;
+}
+
+.prayer-edit-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 0.2rem;
+}
+
+.prayer-edit-subtitle {
+  font-size: 0.75rem;
+  color: #fbbf24;
+  font-weight: 600;
+}
+
+.btn-close-edit {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: #94a3b8;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+}
+
+.btn-close-edit:hover {
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
+}
+
+.prayer-edit-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.edit-field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+
+.edit-label {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #cbd5e1;
+}
+
+.edit-sublabel {
+  font-size: 0.72rem;
+  color: #94a3b8;
+}
+
+.edit-study-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.edit-study-container {
+  padding: 0.85rem;
+  background: rgba(10, 15, 26, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.edit-mode-selector {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.edit-input-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.45rem 0.65rem;
+  background: rgba(18, 25, 38, 0.8);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+.edit-input-row input {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  width: 80px;
+  outline: none;
+  font-family: inherit;
+}
+
+.edit-input-row input[type="time"] {
+  width: 110px;
+}
+
+.edit-input-row span {
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+.prayer-edit-footer {
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.btn-save-edit {
+  width: 100%;
+  padding: 0.75rem;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border: none;
+  border-radius: 12px;
+  color: #0f1728;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.35);
+  transition: all 0.2s ease;
+}
+
+.btn-save-edit:hover {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  transform: translateY(-1px);
+}

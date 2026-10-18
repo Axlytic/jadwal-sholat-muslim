@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Jadwal Harian Muslim — Sholat, Belajar & Istirahat | Banjarbaru</title>
-  <meta name="description" content="Dashboard jadwal sholat 5 waktu akurat, estimasi iqomah & waktu berangkat masjid, serta manajemen waktu belajar dan istirahat tidur untuk Banjarbaru.">
+  <title>Jadwal Harian Muslim — Sholat, Belajar & Istirahat</title>
+  <meta name="description" content="Dashboard jadwal sholat 5 waktu akurat dengan deteksi GPS otomatis, penyesuaian Ihtiyat Kemenag RI, estimasi iqomah, serta manajemen waktu belajar dan istirahat tidur.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
@@ -24,16 +24,26 @@
           <span>🕌</span>
         </div>
         <div>
-          <div class="brand-badge"><span class="pulse-dot"></span> LIVE WITA • BANJARBARU</div>
+          <div class="brand-badge"><span class="pulse-dot"></span> <span id="brandTzBadge">LIVE WITA • BANJARBARU</span></div>
           <h1 class="brand-title">Jadwal Harian Muslim</h1>
         </div>
       </div>
 
       <div class="app-bar__actions">
-        <div class="location-pill">
+        <!-- Interactive Location Pill with GPS detection -->
+        <button class="location-pill location-pill--interactive" id="topLocationBtn" type="button" title="Klik untuk mendeteksi GPS lokasi Anda saat ini">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-          <span>Landasan Ulin, Banjarbaru</span>
+          <span id="topLocationText">Landasan Ulin, Banjarbaru</span>
+          <span class="gps-dot-indicator" id="topGpsIndicator" title="GPS Default"></span>
+        </button>
+
+        <!-- Ihtiyat Status Badge Pill -->
+        <div class="ihtiyat-pill" id="topIhtiyatBadge" title="Penyesuaian waktu pengaman hisab Kemenag RI (+2 Menit)">
+          <span class="ihtiyat-dot"></span>
+          <span id="topIhtiyatText">Ihtiyat +2m</span>
         </div>
+
+        <!-- Open Settings Drawer Button -->
         <button class="btn-config-pill" id="btnToggleSleepConfig" type="button">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
           <span id="btnToggleSleepConfigText">Pengaturan Waktu</span>
@@ -113,7 +123,7 @@
       <div class="bento-card bento-card--date">
         <div class="bento-card__title-row">
           <div class="bento-card__label">📅 KALENDER HARI INI</div>
-          <span class="badge-mini-tag">Kemenag RI</span>
+          <span class="badge-mini-tag" id="calendarSourceTag">Kemenag RI</span>
         </div>
         <div class="dates-content" id="headerDates">
           <span class="date-skeleton"></span>
@@ -139,17 +149,62 @@
       </div>
     </div>
 
-    <!-- ===== EXPANDABLE SETTINGS DRAWER WITH SMART DUAL-MODE INPUTS ===== -->
+    <!-- ===== EXPANDABLE SETTINGS DRAWER ===== -->
     <div class="config-drawer is-hidden" id="sleepConfigPanel">
       <div class="drawer-header">
         <div>
-          <h3>⚙️ Pengaturan Cerdas: Waktu, Tidur & Masjid</h3>
-          <p>Pilih mode input: masukkan dalam <strong>Menit Jeda</strong> atau langsung tentukan <strong>Target Jam</strong></p>
+          <h3>⚙️ Pengaturan Cerdas: Lokasi, Waktu & Masjid</h3>
+          <p>Deteksi GPS otomatis, koreksi standar Ihtiyat Kemenag RI, serta mode input Jam ⇄ Menit</p>
         </div>
       </div>
 
+      <!-- ROW 1: GPS LOCATION & IHTIYAT ACCURACY -->
+      <div class="drawer-section-title">📍 Lokasi GPS & Akurasi Hisab Sholat</div>
+      <div class="config-grid config-grid--location">
+        <!-- 1. GPS Card -->
+        <div class="config-box config-box--location">
+          <div class="smart-box__header">
+            <span class="smart-box__title">📡 Titik Koordinat & Lokasi</span>
+            <span class="badge-mini-tag badge-mini-tag--green" id="gpsBadge">Default Banjarbaru</span>
+          </div>
+          <div class="location-status-row">
+            <div class="location-current-name" id="drawerLocationName">Landasan Ulin, Banjarbaru</div>
+            <div class="location-coords" id="drawerLocationCoords">Lat: -3.4414 • Lon: 114.8430 (WITA)</div>
+          </div>
+          <div class="gps-btn-group">
+            <button type="button" class="btn-gps" id="btnDetectGps">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="7"/></svg>
+              <span id="btnDetectGpsText">Gunakan Lokasi GPS Saya</span>
+            </button>
+            <button type="button" class="btn-gps-reset" id="btnResetLocation" title="Kembalikan ke Banjarbaru">
+              🔄 Reset
+            </button>
+          </div>
+          <div class="gps-feedback is-hidden" id="gpsFeedback"></div>
+        </div>
+
+        <!-- 2. Ihtiyat Kemenag Card -->
+        <div class="config-box config-box--ihtiyat">
+          <div class="smart-box__header">
+            <span class="smart-box__title">🛡️ Pengaman Ihtiyat Kemenag RI</span>
+            <label class="switch-toggle" title="Aktifkan/Nonaktifkan Ihtiyat +2 Menit">
+              <input type="checkbox" id="toggleIhtiyat" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+          <div class="reciprocal-label" id="ihtiyatReciprocalLabel">
+            ✅ +2 Menit Standar Masjid Kemenag RI
+          </div>
+          <p class="ihtiyat-desc">
+            Kemenag RI menambahkan +2 menit pengaman hisab agar waktu adzan di website <strong>100% cocok dengan jam dinding masjid</strong> setempat.
+          </p>
+        </div>
+      </div>
+
+      <!-- ROW 2: SMART SLEEP & TRAVEL INPUTS -->
+      <div class="drawer-section-title" style="margin-top: 1.25rem;">⏰ Waktu Istirahat & Berangkat Masjid</div>
       <div class="config-grid">
-        <!-- 1. Smart Input: Tidur Pasca Isya -->
+        <!-- 3. Smart Input: Tidur Pasca Isya -->
         <div class="config-box config-box--smart" id="smartSleepInputBox">
           <div class="smart-box__header">
             <span class="smart-box__title">🌙 Mulai Tidur Malam</span>
@@ -159,12 +214,10 @@
             </div>
           </div>
 
-          <!-- Reciprocal dynamic feedback label -->
           <div class="reciprocal-label" id="sleepReciprocalLabel">
             ⏰ Jam 20:22 WITA
           </div>
 
-          <!-- Input fields -->
           <div class="smart-input-container">
             <div class="input-unit-wrap input-unit-wrap--minute" id="sleepInputMinuteWrap">
               <input type="number" id="sleepAfterIshaInput" min="0" max="360" value="60">
@@ -177,7 +230,7 @@
           </div>
         </div>
 
-        <!-- 2. Smart Input: Bangun Sebelum Subuh -->
+        <!-- 4. Smart Input: Bangun Sebelum Subuh -->
         <div class="config-box config-box--smart" id="smartWakeInputBox">
           <div class="smart-box__header">
             <span class="smart-box__title">⏰ Bangun Pagi / Subuh</span>
@@ -187,12 +240,10 @@
             </div>
           </div>
 
-          <!-- Reciprocal dynamic feedback label -->
           <div class="reciprocal-label" id="wakeReciprocalLabel">
             ⏰ Jam 04:13 WITA
           </div>
 
-          <!-- Input fields -->
           <div class="smart-input-container">
             <div class="input-unit-wrap input-unit-wrap--minute" id="wakeInputMinuteWrap">
               <input type="number" id="wakeBeforeFajrInput" min="0" max="240" value="30">
@@ -205,7 +256,7 @@
           </div>
         </div>
 
-        <!-- 3. Regular Input: Waktu Jalan ke Masjid -->
+        <!-- 5. Regular Input: Waktu Jalan ke Masjid -->
         <div class="config-box">
           <div class="smart-box__header">
             <span class="smart-box__title">🚶 Waktu Jalan ke Masjid</span>
@@ -226,7 +277,7 @@
       <div class="section__header">
         <div>
           <h2 class="section__title">Jadwal Sholat 5 Waktu</h2>
-          <p class="section__subtitle">Waktu adzan, durasi iqomah masjid, dan estimasi waktu berangkat</p>
+          <p class="section__subtitle" id="sectionPrayerSubtitle">Waktu adzan resmi, durasi iqomah masjid, dan estimasi waktu berangkat</p>
         </div>
         <div class="section__legend">
           <span class="legend-dot legend-dot--green"></span> <span>Iqomah</span>
@@ -257,14 +308,12 @@
         </div>
       </div>
 
-      <div class="timeline" id="timeline">
-        <!-- Rendered by JS -->
-      </div>
+      <div class="timeline" id="timeline"></div>
     </section>
 
     <!-- ===== FOOTER ===== -->
     <footer class="footer">
-      <p>Data hisab dari <a href="https://aladhan.com" target="_blank" rel="noopener">Aladhan API</a> • Landasan Ulin, Banjarbaru</p>
+      <p>Data hisab dari <a href="https://aladhan.com" target="_blank" rel="noopener">Aladhan API</a> • Diselaraskan dengan <span id="footerAccuracyText">Standar Ihtiyat Kemenag RI (+2 Menit)</span></p>
       <p class="footer__note">Didesain dengan inspirasi <strong>Dribbble & Mobbin Bento Grid</strong></p>
     </footer>
   </div>

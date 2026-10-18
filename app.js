@@ -1,14 +1,24 @@
 /* =============================================
    CONFIGURATION & DEFAULTS
    ============================================= */
-const CONFIG = {
+const DEFAULT_CONFIG = {
+  method: 99,                   // Custom calculation
+  methodSettings: '20,null,18', // Kemenag RI standard: Subuh 20°, Isya 18°
+  school: 1,                    // Shafi'i
+};
+
+const DEFAULT_LOCATION = {
   lat: -3.4414,
   lon: 114.8430,
-  method: 99,                   // Custom calculation
-  methodSettings: '20,null,18', // Kemenag RI: Subuh 20°, Isya 18°
-  school: 1,                    // Shafi'i
+  name: 'Landasan Ulin, Banjarbaru',
+  isGps: false,
   timezone: 'Asia/Makassar',
-  locationName: 'Landasan Ulin, Banjarbaru',
+  tzLabel: 'WITA',
+};
+
+const DEFAULT_IHTIYAT = {
+  enabled: true,
+  minutes: 2, // Standar Kemenag RI: +2 Menit
 };
 
 const PRAYERS = [
@@ -19,14 +29,18 @@ const PRAYERS = [
   { id: 'isha',    apiKey: 'Isha',    name: 'Isya',    arabic: 'العشاء', icon: '🌙', defaultOn: true,  defaultOffset: 30,  defaultDuration: 60,  defaultIqomah: 10 },
 ];
 
-const STORAGE_KEY = 'jadwalHarian_settings_v3';
-const LEGACY_STORAGE_KEY = 'jadwalHarian_settings_v2';
+const STORAGE_KEY = 'jadwalHarian_settings_v4';
+const LEGACY_STORAGE_V3 = 'jadwalHarian_settings_v3';
+const LEGACY_STORAGE_V2 = 'jadwalHarian_settings_v2';
 
 /* =============================================
    STATE
    ============================================= */
 let state = {
-  prayerTimes: {},       // { fajr: '04:32', ... }
+  location: { ...DEFAULT_LOCATION },
+  ihtiyat: { ...DEFAULT_IHTIYAT },
+  prayerTimes: {},       // { fajr: '04:44', ... } -> adjusted with ihtiyat
+  rawPrayerTimes: {},    // { fajr: '04:42', ... } -> pure astronomical
   hijriDate: null,
   gregorianDate: null,
   settings: {},          // { fajr: { enabled, offset, duration, iqomah, studyMode: 'minute' }, ... }
@@ -37,7 +51,7 @@ let state = {
     sleepInputMode: 'minute', // 'minute' | 'time'
     wakeInputMode: 'minute',  // 'minute' | 'time'
   },
-  activeFilter: 'all',   // 'all', 'prayer', 'study', 'sleep'
+  activeFilter: 'all',
   loaded: false,
 };
 
@@ -56,9 +70,33 @@ function loadSettings() {
   try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch(e) {}
 
   if (!saved) {
-    try { saved = JSON.parse(localStorage.getItem(LEGACY_STORAGE_KEY)); } catch(e) {}
+    try { saved = JSON.parse(localStorage.getItem(LEGACY_STORAGE_V3)); } catch(e) {}
+  }
+  if (!saved) {
+    try { saved = JSON.parse(localStorage.getItem(LEGACY_STORAGE_V2)); } catch(e) {}
   }
 
+  // 1. Location Settings
+  if (saved && saved.location) {
+    state.location = {
+      lat: saved.location.lat ?? DEFAULT_LOCATION.lat,
+      lon: saved.location.lon ?? DEFAULT_LOCATION.lon,
+      name: saved.location.name ?? DEFAULT_LOCATION.name,
+      isGps: saved.location.isGps ?? false,
+      timezone: saved.location.timezone ?? DEFAULT_LOCATION.timezone,
+      tzLabel: saved.location.tzLabel ?? DEFAULT_LOCATION.tzLabel,
+    };
+  }
+
+  // 2. Ihtiyat Settings
+  if (saved && saved.ihtiyat) {
+    state.ihtiyat = {
+      enabled: saved.ihtiyat.enabled ?? DEFAULT_IHTIYAT.enabled,
+      minutes: saved.ihtiyat.minutes ?? DEFAULT_IHTIYAT.minutes,
+    };
+  }
+
+  // 3. Prayers Settings
   PRAYERS.forEach(p => {
     const prayerSaved = saved && saved.prayers ? saved.prayers[p.id] : (saved ? saved[p.id] : null);
     if (prayerSaved) {
@@ -80,6 +118,7 @@ function loadSettings() {
     }
   });
 
+  // 4. Sleep Settings
   if (saved && saved.sleep) {
     state.sleepConfig.sleepAfterIsha = saved.sleep.sleepAfterIsha ?? 60;
     state.sleepConfig.wakeBeforeFajr = saved.sleep.wakeBeforeFajr ?? 30;
@@ -92,18 +131,23 @@ function loadSettings() {
   const sleepMinInput = document.getElementById('sleepAfterIshaInput');
   const wakeMinInput = document.getElementById('wakeBeforeFajrInput');
   const travelInput = document.getElementById('globalTravelInput');
+  const toggleIhtiyatInput = document.getElementById('toggleIhtiyat');
 
   if (sleepMinInput) sleepMinInput.value = state.sleepConfig.sleepAfterIsha;
   if (wakeMinInput) wakeMinInput.value = state.sleepConfig.wakeBeforeFajr;
   if (travelInput) travelInput.value = state.sleepConfig.globalTravel;
+  if (toggleIhtiyatInput) toggleIhtiyatInput.checked = state.ihtiyat.enabled;
 
-  // Set initial active state of mode buttons
+  updateLocationUI();
+  updateIhtiyatUI();
   updateSleepModeUI();
   updateWakeModeUI();
 }
 
 function saveSettings() {
   const dataToSave = {
+    location: state.location,
+    ihtiyat: state.ihtiyat,
     prayers: state.settings,
     sleep: state.sleepConfig,
   };
@@ -113,10 +157,10 @@ function saveSettings() {
 }
 
 /* =============================================
-   EVENT LISTENERS & SMART DUAL-MODE CONTROLS
+   EVENT LISTENERS & CONTROLS
    ============================================= */
 function initEventListeners() {
-  // Drawer Toggle
+  // 1. Drawer Toggle
   const btnToggle = document.getElementById('btnToggleSleepConfig');
   const btnText = document.getElementById('btnToggleSleepConfigText');
   const panel = document.getElementById('sleepConfigPanel');
@@ -129,8 +173,42 @@ function initEventListeners() {
     });
   }
 
-  // --- SMART INPUT 1: MULAI TIDUR ---
-  // Mode switcher: Menit vs Jam
+  // 2. Interactive Location Pill (top bar) - also opens drawer and prompts GPS
+  const topLocationBtn = document.getElementById('topLocationBtn');
+  if (topLocationBtn) {
+    topLocationBtn.addEventListener('click', () => {
+      if (panel && panel.classList.contains('is-hidden')) {
+        panel.classList.remove('is-hidden');
+        if (btnText) btnText.textContent = 'Tutup Pengaturan';
+      }
+      detectGpsLocation();
+    });
+  }
+
+  // 3. GPS Buttons in Drawer
+  const btnDetectGps = document.getElementById('btnDetectGps');
+  if (btnDetectGps) {
+    btnDetectGps.addEventListener('click', () => {
+      detectGpsLocation();
+    });
+  }
+
+  const btnResetLocation = document.getElementById('btnResetLocation');
+  if (btnResetLocation) {
+    btnResetLocation.addEventListener('click', () => {
+      resetLocationToDefault();
+    });
+  }
+
+  // 4. Ihtiyat Toggle
+  const toggleIhtiyat = document.getElementById('toggleIhtiyat');
+  if (toggleIhtiyat) {
+    toggleIhtiyat.addEventListener('change', (e) => {
+      setIhtiyat(e.target.checked);
+    });
+  }
+
+  // 5. SMART INPUT 1: MULAI TIDUR
   const smartSleepBox = document.getElementById('smartSleepInputBox');
   if (smartSleepBox) {
     smartSleepBox.addEventListener('click', (e) => {
@@ -142,7 +220,6 @@ function initEventListeners() {
     });
   }
 
-  // Input minute
   const sleepMinInput = document.getElementById('sleepAfterIshaInput');
   if (sleepMinInput) {
     sleepMinInput.addEventListener('input', (e) => {
@@ -154,13 +231,12 @@ function initEventListeners() {
     });
   }
 
-  // Input time
   const sleepTimeInput = document.getElementById('sleepTargetTimeInput');
   if (sleepTimeInput) {
     sleepTimeInput.addEventListener('change', (e) => {
       const ishaTime = state.prayerTimes['isha'];
       if (!ishaTime) return;
-      const targetTime = e.target.value; // "HH:MM"
+      const targetTime = e.target.value;
       const ishaMins = timeToMinutes(ishaTime);
       const targetMins = timeToMinutes(targetTime);
 
@@ -168,7 +244,6 @@ function initEventListeners() {
       if (targetMins >= ishaMins) {
         diff = targetMins - ishaMins;
       } else {
-        // Past midnight
         diff = (1440 - ishaMins) + targetMins;
       }
       state.sleepConfig.sleepAfterIsha = clamp(diff, 0, 360);
@@ -180,8 +255,7 @@ function initEventListeners() {
     });
   }
 
-  // --- SMART INPUT 2: BANGUN PAGI ---
-  // Mode switcher: Menit vs Jam
+  // 6. SMART INPUT 2: BANGUN PAGI
   const smartWakeBox = document.getElementById('smartWakeInputBox');
   if (smartWakeBox) {
     smartWakeBox.addEventListener('click', (e) => {
@@ -193,7 +267,6 @@ function initEventListeners() {
     });
   }
 
-  // Input minute
   const wakeMinInput = document.getElementById('wakeBeforeFajrInput');
   if (wakeMinInput) {
     wakeMinInput.addEventListener('input', (e) => {
@@ -205,13 +278,12 @@ function initEventListeners() {
     });
   }
 
-  // Input time
   const wakeTimeInput = document.getElementById('wakeTargetTimeInput');
   if (wakeTimeInput) {
     wakeTimeInput.addEventListener('change', (e) => {
       const fajrTime = state.prayerTimes['fajr'];
       if (!fajrTime) return;
-      const targetTime = e.target.value; // "HH:MM"
+      const targetTime = e.target.value;
       const fajrMins = timeToMinutes(fajrTime);
       const targetMins = timeToMinutes(targetTime);
 
@@ -230,7 +302,7 @@ function initEventListeners() {
     });
   }
 
-  // Travel time input
+  // 7. Travel time input
   const travelInput = document.getElementById('globalTravelInput');
   if (travelInput) {
     travelInput.addEventListener('input', (e) => {
@@ -241,7 +313,7 @@ function initEventListeners() {
     });
   }
 
-  // Timeline Filter
+  // 8. Timeline Filter
   const filterContainer = document.getElementById('timelineFilter');
   if (filterContainer) {
     filterContainer.addEventListener('click', (e) => {
@@ -256,7 +328,209 @@ function initEventListeners() {
 }
 
 /* =============================================
-   SMART RECIPROCAL UI HELPERS
+   GPS & LOCATION SYSTEM
+   ============================================= */
+async function detectGpsLocation() {
+  const btn = document.getElementById('btnDetectGps');
+  const btnText = document.getElementById('btnDetectGpsText');
+
+  if (!navigator.geolocation) {
+    showGpsFeedback('Perangkat Anda tidak mendukung deteksi lokasi GPS.', 'error');
+    return;
+  }
+
+  if (btn) btn.disabled = true;
+  if (btnText) btnText.textContent = 'Mencari Satelit GPS...';
+  showGpsFeedback('📡 Sedang mendeteksi sinyal koordinat GPS...', 'loading');
+
+  navigator.geolocation.getCurrentPosition(
+    async (pos) => {
+      const lat = parseFloat(pos.coords.latitude.toFixed(4));
+      const lon = parseFloat(pos.coords.longitude.toFixed(4));
+
+      // Calculate accurate timezone based on longitude in Indonesia or device
+      let tz = 'Asia/Makassar';
+      let tzLabel = 'WITA';
+      if (lon < 110.0) {
+        tz = 'Asia/Jakarta';
+        tzLabel = 'WIB';
+      } else if (lon <= 125.0) {
+        tz = 'Asia/Makassar';
+        tzLabel = 'WITA';
+      } else if (lon <= 142.0) {
+        tz = 'Asia/Jayapura';
+        tzLabel = 'WIT';
+      } else {
+        try {
+          tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Asia/Makassar';
+          tzLabel = 'LOKAL';
+        } catch(e) {}
+      }
+
+      showGpsFeedback(`🛰️ Koordinat didapat (${lat}, ${lon}). Mengambil nama wilayah...`, 'loading');
+
+      // Reverse geocoding with OpenStreetMap Nominatim
+      let placeName = `Titik GPS (${lat}, ${lon})`;
+      try {
+        const geoUrl = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=14&addressdetails=1`;
+        const geoRes = await fetch(geoUrl, {
+          headers: { 'Accept-Language': 'id,en' }
+        });
+        if (geoRes.ok) {
+          const geoJson = await geoRes.json();
+          const addr = geoJson.address || {};
+          const district = addr.suburb || addr.city_district || addr.village || addr.neighbourhood || '';
+          const city = addr.city || addr.town || addr.municipality || addr.county || addr.state || '';
+          if (district && city) {
+            placeName = `${district}, ${city}`;
+          } else if (city) {
+            placeName = city;
+          } else if (geoJson.display_name) {
+            placeName = geoJson.display_name.split(',').slice(0, 2).join(',').trim();
+          }
+        }
+      } catch (err) {
+        console.warn('Geocoding notice:', err);
+      }
+
+      state.location = {
+        lat,
+        lon,
+        name: placeName,
+        isGps: true,
+        timezone: tz,
+        tzLabel: tzLabel,
+      };
+
+      saveSettings();
+      updateLocationUI();
+      showGpsFeedback(`✅ Lokasi aktif: ${placeName} (${tzLabel})`, 'success');
+
+      if (btn) btn.disabled = false;
+      if (btnText) btnText.textContent = 'Gunakan Lokasi GPS Saya';
+
+      await fetchPrayerTimes();
+    },
+    (err) => {
+      if (btn) btn.disabled = false;
+      if (btnText) btnText.textContent = 'Gunakan Lokasi GPS Saya';
+      let msg = 'Gagal mendeteksi lokasi GPS.';
+      if (err.code === 1) {
+        msg = 'Izin lokasi GPS ditolak oleh browser. Silakan aktifkan izin lokasi di browser Anda.';
+      } else if (err.code === 2) {
+        msg = 'Sinyal lokasi tidak tersedia. Pastikan GPS perangkat Anda aktif.';
+      } else if (err.code === 3) {
+        msg = 'Waktu pencarian sinyal GPS habis (timeout).';
+      }
+      showGpsFeedback(`❌ ${msg}`, 'error');
+    },
+    { enableHighAccuracy: true, timeout: 10000, maximumAge: 60000 }
+  );
+}
+
+async function resetLocationToDefault() {
+  state.location = { ...DEFAULT_LOCATION };
+  saveSettings();
+  updateLocationUI();
+  showGpsFeedback('🔄 Lokasi dikembalikan ke default: Landasan Ulin, Banjarbaru (WITA)', 'success');
+  await fetchPrayerTimes();
+}
+
+function showGpsFeedback(msg, type) {
+  const el = document.getElementById('gpsFeedback');
+  if (!el) return;
+  el.className = `gps-feedback status-${type}`;
+  el.textContent = msg;
+  el.classList.remove('is-hidden');
+
+  if (type === 'success' || type === 'error') {
+    setTimeout(() => {
+      if (el) el.classList.add('is-hidden');
+    }, 6000);
+  }
+}
+
+function updateLocationUI() {
+  const loc = state.location;
+  const topText = document.getElementById('topLocationText');
+  const topGpsDot = document.getElementById('topGpsIndicator');
+  const drawerName = document.getElementById('drawerLocationName');
+  const drawerCoords = document.getElementById('drawerLocationCoords');
+  const gpsBadge = document.getElementById('gpsBadge');
+  const brandTzBadge = document.getElementById('brandTzBadge');
+
+  if (topText) topText.textContent = loc.name;
+  if (topGpsDot) {
+    topGpsDot.classList.toggle('is-gps', loc.isGps);
+    topGpsDot.title = loc.isGps ? 'GPS Aktif' : 'Default Banjarbaru';
+  }
+  if (drawerName) drawerName.textContent = loc.name;
+  if (drawerCoords) {
+    drawerCoords.textContent = `Lat: ${loc.lat} • Lon: ${loc.lon} (${loc.tzLabel})`;
+  }
+  if (gpsBadge) {
+    gpsBadge.textContent = loc.isGps ? '📍 GPS Aktif' : 'Default Banjarbaru';
+    gpsBadge.className = `badge-mini-tag ${loc.isGps ? 'badge-mini-tag--amber' : 'badge-mini-tag--green'}`;
+  }
+  if (brandTzBadge) {
+    const cityName = loc.name.split(',').pop().trim().toUpperCase();
+    brandTzBadge.textContent = `LIVE ${loc.tzLabel} • ${cityName}`;
+  }
+}
+
+/* =============================================
+   IHTIYAT KEMENAG RI (+2 MENIT)
+   ============================================= */
+function setIhtiyat(enabled) {
+  state.ihtiyat.enabled = enabled;
+  saveSettings();
+  updateIhtiyatUI();
+
+  // Recalculate adzan times from raw API times instantaneously without re-fetching network
+  if (state.loaded && state.rawPrayerTimes) {
+    PRAYERS.forEach(p => {
+      const raw = state.rawPrayerTimes[p.id];
+      if (raw) {
+        state.prayerTimes[p.id] = enabled ? addMinutes(raw, state.ihtiyat.minutes) : raw;
+      }
+    });
+    renderAll();
+  }
+}
+
+function updateIhtiyatUI() {
+  const enabled = state.ihtiyat.enabled;
+  const topBadge = document.getElementById('topIhtiyatBadge');
+  const topText = document.getElementById('topIhtiyatText');
+  const toggle = document.getElementById('toggleIhtiyat');
+  const recipLabel = document.getElementById('ihtiyatReciprocalLabel');
+  const footerAccuracy = document.getElementById('footerAccuracyText');
+
+  if (topBadge) topBadge.classList.toggle('is-disabled', !enabled);
+  if (topText) topText.textContent = enabled ? 'Ihtiyat +2m' : 'Astronomis Murni';
+  if (toggle) toggle.checked = enabled;
+
+  if (recipLabel) {
+    if (enabled) {
+      recipLabel.innerHTML = '✅ <strong>+2 Menit</strong> Standar Masjid Kemenag RI';
+      recipLabel.style.color = 'var(--emerald-400)';
+      recipLabel.style.borderColor = 'rgba(16, 185, 129, 0.3)';
+      recipLabel.style.background = 'rgba(16, 185, 129, 0.12)';
+    } else {
+      recipLabel.innerHTML = '⚠️ <strong>Astronomis Murni</strong> (Tanpa +2 Menit)';
+      recipLabel.style.color = 'var(--gold-400)';
+      recipLabel.style.borderColor = 'rgba(245, 158, 11, 0.3)';
+      recipLabel.style.background = 'rgba(245, 158, 11, 0.12)';
+    }
+  }
+
+  if (footerAccuracy) {
+    footerAccuracy.textContent = enabled ? 'Standar Ihtiyat Kemenag RI (+2 Menit)' : 'Hisab Astronomis Murni (Aladhan)';
+  }
+}
+
+/* =============================================
+   SMART RECIPROCAL DUAL-MODE HELPERS
    ============================================= */
 function updateSleepModeUI() {
   const isMinute = state.sleepConfig.sleepInputMode === 'minute';
@@ -289,11 +563,10 @@ function updateSleepReciprocal() {
   const lbl = document.getElementById('sleepReciprocalLabel');
   if (!lbl) return;
 
+  const tz = state.location.tzLabel;
   if (isMinute) {
-    // Mode Menit: Tampilkan label Jam
-    lbl.innerHTML = `⏰ Waktu Tidur: <strong>${calculatedTime} WITA</strong>`;
+    lbl.innerHTML = `⏰ Waktu Tidur: <strong>${calculatedTime} ${tz}</strong>`;
   } else {
-    // Mode Jam: Tampilkan label Menit
     lbl.innerHTML = `⏳ Selisih: <strong>${offset} menit</strong> pasca Isya (${ishaTime})`;
   }
 }
@@ -319,7 +592,7 @@ function updateWakeModeUI() {
 
 function updateWakeReciprocal() {
   const isMinute = state.sleepConfig.wakeInputMode === 'minute';
-  const fajrTime = state.prayerTimes['fajr'] || '04:43';
+  const fajrTime = state.prayerTimes['fajr'] || '04:44';
   const offset = state.sleepConfig.wakeBeforeFajr;
   const calculatedTime = subtractMinutes(fajrTime, offset);
 
@@ -329,17 +602,16 @@ function updateWakeReciprocal() {
   const lbl = document.getElementById('wakeReciprocalLabel');
   if (!lbl) return;
 
+  const tz = state.location.tzLabel;
   if (isMinute) {
-    // Mode Menit: Tampilkan label Jam
-    lbl.innerHTML = `⏰ Waktu Bangun: <strong>${calculatedTime} WITA</strong>`;
+    lbl.innerHTML = `⏰ Waktu Bangun: <strong>${calculatedTime} ${tz}</strong>`;
   } else {
-    // Mode Jam: Tampilkan label Menit
-    lbl.innerHTML = `⏳ Selisih: <strong>${offset} menit</strong> jelang Subuh (${fajrTime})`;
+    lbl.innerHTML = `⏳ Selisih: <strong>${offset} menit</strong> sebelum Subuh (${fajrTime})`;
   }
 }
 
 /* =============================================
-   API FETCH (Aladhan API)
+   API FETCHING
    ============================================= */
 async function fetchPrayerTimes() {
   const now = new Date();
@@ -348,10 +620,14 @@ async function fetchPrayerTimes() {
   const yyyy = now.getFullYear();
   const dateStr = `${dd}-${mm}-${yyyy}`;
 
+  const lat = state.location.lat;
+  const lon = state.location.lon;
+  const tz = state.location.timezone;
+
   const url = `https://api.aladhan.com/v1/timings/${dateStr}`
-    + `?latitude=${CONFIG.lat}&longitude=${CONFIG.lon}`
-    + `&method=${CONFIG.method}&methodSettings=${CONFIG.methodSettings}`
-    + `&school=${CONFIG.school}&timezonestring=${CONFIG.timezone}`;
+    + `?latitude=${lat}&longitude=${lon}`
+    + `&method=${DEFAULT_CONFIG.method}&methodSettings=${DEFAULT_CONFIG.methodSettings}`
+    + `&school=${DEFAULT_CONFIG.school}&timezonestring=${tz}`;
 
   try {
     const res = await fetch(url);
@@ -363,7 +639,13 @@ async function fetchPrayerTimes() {
     const timings = json.data.timings;
 
     PRAYERS.forEach(p => {
-      state.prayerTimes[p.id] = (timings[p.apiKey] || '').split(' ')[0];
+      const raw = (timings[p.apiKey] || '').split(' ')[0];
+      state.rawPrayerTimes[p.id] = raw;
+      if (state.ihtiyat.enabled) {
+        state.prayerTimes[p.id] = addMinutes(raw, state.ihtiyat.minutes);
+      } else {
+        state.prayerTimes[p.id] = raw;
+      }
     });
 
     state.hijriDate = json.data.date.hijri;
@@ -457,49 +739,57 @@ function renderSleepCard() {
   document.getElementById('sleepDurationDisplay').textContent = `${hours}j ${mins}m`;
 
   const badge = document.getElementById('sleepQualityBadge');
-  if (totalSleepMinutes >= 420) {
-    badge.className = 'badge-status-pill sleep-badge--good';
-    badge.textContent = '🟢 Sehat (7-8 Jam)';
-  } else if (totalSleepMinutes >= 360) {
-    badge.className = 'badge-status-pill sleep-badge--fair';
-    badge.textContent = '🟡 Cukup (6-7 Jam)';
-  } else {
-    badge.className = 'badge-status-pill sleep-badge--low';
-    badge.textContent = '🔴 Kurang (<6 Jam)';
+  if (badge) {
+    if (hours >= 7 && hours <= 9) {
+      badge.textContent = 'Sehat (7–8 Jam)';
+      badge.className = 'badge-status-pill badge-status-pill--good';
+    } else if (hours < 6) {
+      badge.textContent = 'Kurang (< 6 Jam)';
+      badge.className = 'badge-status-pill badge-status-pill--warn';
+    } else {
+      badge.textContent = 'Cukup';
+      badge.className = 'badge-status-pill';
+    }
   }
 }
 
-/* ---- Prayer Cards (With Smart Dual-Mode Study Input) ---- */
+/* ---- 5 Prayer Cards ---- */
 function renderPrayerCards() {
   const grid = document.getElementById('prayerGrid');
-  const currentId = getCurrentPrayerId();
   const travel = state.sleepConfig.globalTravel;
+  const currentPrayerId = getCurrentPrayerId();
 
   grid.innerHTML = PRAYERS.map(p => {
     const time = state.prayerTimes[p.id] || '--:--';
     const s = state.settings[p.id];
-    const isCurrent = p.id === currentId;
+    const isCurrent = p.id === currentPrayerId;
+    const isMinuteMode = s.studyMode === 'minute';
 
-    const iqomahTime = addMinutes(time, s.iqomah);
-    const departTime = subtractMinutes(iqomahTime, travel);
+    const iqomahTime = time !== '--:--' ? addMinutes(time, s.iqomah) : '--:--';
+    const departTime = time !== '--:--' ? subtractMinutes(iqomahTime, travel) : '--:--';
+    const studyStartTime = time !== '--:--' ? addMinutes(time, s.offset) : '--:--';
 
-    const studyStart = s.enabled ? addMinutes(time, s.offset) : null;
-    const studyEnd = s.enabled ? addMinutes(time, s.offset + s.duration) : null;
-    const isStudyMinMode = s.studyMode === 'minute';
+    const reciprocalStudyHtml = isMinuteMode
+      ? `⏰ Mulai: <strong>${studyStartTime} ${state.location.tzLabel}</strong>`
+      : `⏳ Jarak: <strong>${s.offset}m</strong> pasca ${p.name}`;
 
     return `
-      <div class="prayer-card ${isCurrent ? 'is-current' : ''}" data-id="${p.id}">
-        <div class="prayer-card__header">
-          <span class="prayer-card__icon">${p.icon}</span>
-          <span class="prayer-card__badge">Sekarang</span>
+      <div class="prayer-card ${isCurrent ? 'is-active' : ''}" data-id="${p.id}">
+        <div class="prayer-card__arabic-bg">${p.arabic}</div>
+
+        <div class="prayer-card__top">
+          <div class="prayer-card__left">
+            <span class="prayer-card__icon">${p.icon}</span>
+            <div>
+              <div class="prayer-card__name">${p.name}</div>
+              <div class="prayer-card__arabic">${p.arabic}</div>
+            </div>
+          </div>
+          ${isCurrent ? '<span class="prayer-card__badge-live">Sekarang</span>' : ''}
         </div>
-        <div class="prayer-card__name-row">
-          <div class="prayer-card__name">${p.name}</div>
-          <div class="prayer-card__arabic">${p.arabic}</div>
-        </div>
+
         <div class="prayer-card__time">${time}</div>
 
-        <!-- Info Kotak Iqomah & Berangkat -->
         <div class="prayer-card__timing-box">
           <div class="timing-row">
             <span class="timing-row__label">⏱️ Iqomah</span>
@@ -511,89 +801,117 @@ function renderPrayerCards() {
           </div>
         </div>
 
-        <!-- Segmented Tab: Belajar vs Iqomah -->
-        <div class="card-tabs">
-          <button type="button" class="card-tab-btn is-active" data-tab="study" data-prayer="${p.id}">📚 Belajar</button>
-          <button type="button" class="card-tab-btn" data-tab="iqomah" data-prayer="${p.id}">⏱️ Iqomah</button>
+        <div class="prayer-card__tabs">
+          <button class="prayer-tab is-active" data-tab="study" data-prayer="${p.id}" type="button">
+            📚 Belajar
+          </button>
+          <button class="prayer-tab" data-tab="iqomah" data-prayer="${p.id}" type="button">
+            ⏱️ Iqomah
+          </button>
         </div>
 
-        <!-- Tab Pane 1: Belajar (Smart Dual-Mode) -->
-        <div class="card-tab-pane is-active" data-pane="study-${p.id}">
-          <label class="toggle">
-            <input type="checkbox" ${s.enabled ? 'checked' : ''} data-action="toggle-study" data-prayer="${p.id}">
-            <span class="toggle__track"></span>
-            <span class="toggle__label">Aktifkan Belajar</span>
-          </label>
-          <div class="study-inputs ${s.enabled ? 'is-visible' : ''}" data-inputs="${p.id}">
-            
-            <!-- Smart Mode Header inside Prayer Card -->
-            <div class="smart-study-header">
-              <span class="smart-study-reciprocal" id="studyReciprocal-${p.id}">
-                ${isStudyMinMode ? `⏰ Jam ${studyStart || '--:--'}` : `⏳ ${s.offset}m pasca ${p.name}`}
-              </span>
-              <div class="smart-toggle-pill">
-                <button type="button" class="btn-mode ${isStudyMinMode ? 'is-active' : ''}" data-action="toggle-study-mode" data-mode="minute" data-prayer="${p.id}">Menit</button>
-                <button type="button" class="btn-mode ${!isStudyMinMode ? 'is-active' : ''}" data-action="toggle-study-mode" data-mode="time" data-prayer="${p.id}">Jam</button>
+        <div class="prayer-pane is-active" data-pane="study-${p.id}">
+          <div class="prayer-study-control">
+            <label class="study-toggle-label">
+              <input type="checkbox"
+                     data-action="toggle-study"
+                     data-prayer="${p.id}"
+                     ${s.enabled ? 'checked' : ''}>
+              <span class="study-toggle-switch"></span>
+              <span class="study-toggle-text">Aktifkan Belajar</span>
+            </label>
+
+            <div class="study-inputs ${s.enabled ? 'is-visible' : ''}" data-inputs="${p.id}">
+              <!-- Reciprocal Badge & Dual-Mode Pill -->
+              <div class="study-reciprocal-row">
+                <span class="smart-study-reciprocal" id="studyReciprocal-${p.id}">
+                  ${reciprocalStudyHtml}
+                </span>
+                <div class="smart-toggle-pill">
+                  <button type="button" class="btn-mode ${isMinuteMode ? 'is-active' : ''}"
+                          data-action="toggle-study-mode" data-prayer="${p.id}" data-mode="minute">Menit</button>
+                  <button type="button" class="btn-mode ${!isMinuteMode ? 'is-active' : ''}"
+                          data-action="toggle-study-mode" data-prayer="${p.id}" data-mode="time">Jam</button>
+                </div>
+              </div>
+
+              <!-- Input Row: Minute Mode -->
+              <div class="study-field-row ${!isMinuteMode ? 'is-hidden' : ''}" data-study-row="minute-${p.id}">
+                <span class="study-field-lbl">Jeda</span>
+                <input type="number"
+                       class="study-field-input"
+                       data-action="study-offset"
+                       data-prayer="${p.id}"
+                       value="${s.offset}"
+                       min="0" max="300" step="5">
+                <span class="study-field-unit">mnt pasca ${p.name}</span>
+              </div>
+
+              <!-- Input Row: Time Mode -->
+              <div class="study-field-row ${isMinuteMode ? 'is-hidden' : ''}" data-study-row="time-${p.id}">
+                <span class="study-field-lbl">Mulai</span>
+                <input type="time"
+                       class="study-field-input study-field-input--time"
+                       data-action="study-time"
+                       data-prayer="${p.id}"
+                       value="${studyStartTime}">
+                <span class="study-field-unit">${state.location.tzLabel}</span>
+              </div>
+
+              <!-- Duration Input -->
+              <div class="study-field-row">
+                <span class="study-field-lbl">Durasi</span>
+                <input type="number"
+                       class="study-field-input"
+                       data-action="study-duration"
+                       data-prayer="${p.id}"
+                       value="${s.duration}"
+                       min="5" max="480" step="5">
+                <span class="study-field-unit">menit</span>
+              </div>
+
+              <div class="study-preview">
+                📚 ${studyStartTime} — ${addMinutes(studyStartTime, s.duration)}
               </div>
             </div>
-
-            <!-- Jeda / Waktu Mulai Input -->
-            <div class="input-row ${isStudyMinMode ? '' : 'is-hidden'}" data-study-row="minute-${p.id}">
-              <span class="input-row__label">Jeda</span>
-              <input type="number" value="${s.offset}" min="0" max="300" data-action="study-offset" data-prayer="${p.id}">
-              <span class="input-row__unit">mnt pasca ${p.name}</span>
-            </div>
-
-            <div class="input-row ${!isStudyMinMode ? '' : 'is-hidden'}" data-study-row="time-${p.id}">
-              <span class="input-row__label">Mulai</span>
-              <input type="time" value="${studyStart || '13:00'}" data-action="study-time" data-prayer="${p.id}" style="width:90px; color-scheme:dark; background:var(--bg-input); border:1px solid var(--border-card); border-radius:6px; color:#fff; font-weight:700; text-align:center;">
-              <span class="input-row__unit">WITA</span>
-            </div>
-
-            <!-- Durasi Belajar -->
-            <div class="input-row">
-              <span class="input-row__label">Durasi</span>
-              <input type="number" value="${s.duration}" min="5" max="480" data-action="study-duration" data-prayer="${p.id}">
-              <span class="input-row__unit">menit</span>
-            </div>
-
-            ${studyStart ? `
-            <div class="study-preview">
-              📚 ${studyStart} — ${studyEnd}
-            </div>` : ''}
           </div>
         </div>
 
-        <!-- Tab Pane 2: Iqomah Customization -->
-        <div class="card-tab-pane" data-pane="iqomah-${p.id}">
-          <div class="iqomah-inputs">
-            <div class="input-row">
-              <span class="input-row__label">Jeda Iqomah</span>
-              <input type="number" value="${s.iqomah}" min="1" max="60" data-action="iqomah-duration" data-prayer="${p.id}">
-              <span class="input-row__unit">menit</span>
+        <div class="prayer-pane" data-pane="iqomah-${p.id}">
+          <div class="iqomah-pane-content">
+            <div class="study-field-row">
+              <span class="study-field-lbl">Jeda Iqomah</span>
+              <input type="number"
+                     class="study-field-input"
+                     data-action="iqomah-duration"
+                     data-prayer="${p.id}"
+                     value="${s.iqomah}"
+                     min="1" max="60" step="1">
+              <span class="study-field-unit">menit setelah adzan</span>
             </div>
-            <p style="font-size:0.68rem; color:var(--text-muted); margin-top:0.25rem;">
-              Masjid Landasan Ulin • Jalan: <strong>${travel} mnt</strong>
-            </p>
+            <div class="iqomah-pane-hint">
+              Waktu tempuh ke masjid: <strong>${travel} menit</strong> (diatur pada panel atas)
+            </div>
           </div>
         </div>
-      </div>`;
+      </div>
+    `;
   }).join('');
 
-  grid.addEventListener('change', handleCardInput);
-  grid.addEventListener('input', handleCardInput);
+  grid.removeEventListener('click', handleCardClick);
+  grid.removeEventListener('input', handleCardInput);
   grid.addEventListener('click', handleCardClick);
+  grid.addEventListener('input', handleCardInput);
 }
 
 function handleCardClick(e) {
-  // Tab switcher
-  const tabBtn = e.target.closest('.card-tab-btn');
+  const tabBtn = e.target.closest('.prayer-tab');
   if (tabBtn) {
     const prayerId = tabBtn.dataset.prayer;
     const tabType = tabBtn.dataset.tab;
     const card = tabBtn.closest('.prayer-card');
 
-    card.querySelectorAll('.card-tab-btn').forEach(b => b.classList.remove('is-active'));
+    card.querySelectorAll('.prayer-tab').forEach(b => b.classList.remove('is-active'));
     tabBtn.classList.add('is-active');
 
     const studyPane = card.querySelector(`[data-pane="study-${prayerId}"]`);
@@ -647,7 +965,6 @@ function handleCardInput(e) {
     if (inputs) inputs.classList.toggle('is-visible', s.enabled);
   } else if (action === 'study-offset') {
     s.offset = clamp(parseInt(el.value) || 0, 0, 300);
-    // sync time input
     const timeInput = document.querySelector(`[data-action="study-time"][data-prayer="${prayerId}"]`);
     if (timeInput) timeInput.value = addMinutes(prayerTime, s.offset);
   } else if (action === 'study-time') {
@@ -656,7 +973,6 @@ function handleCardInput(e) {
     const targetMins = timeToMinutes(targetTime);
     let diff = targetMins >= prayerMins ? (targetMins - prayerMins) : ((1440 - prayerMins) + targetMins);
     s.offset = clamp(diff, 0, 300);
-    // sync minute input
     const minInput = document.querySelector(`[data-action="study-offset"][data-prayer="${prayerId}"]`);
     if (minInput) minInput.value = s.offset;
   } else if (action === 'study-duration') {
@@ -693,10 +1009,8 @@ function updatePrayerStudyReciprocal(prayerId) {
   if (!recipEl) return;
 
   if (isMinute) {
-    // Mode Menit: Label di atas menampilkan JAM
-    recipEl.innerHTML = `⏰ Mulai: <strong>${studyStart} WITA</strong>`;
+    recipEl.innerHTML = `⏰ Mulai: <strong>${studyStart} ${state.location.tzLabel}</strong>`;
   } else {
-    // Mode Jam: Label di atas menampilkan MENIT
     recipEl.innerHTML = `⏳ Jarak: <strong>${s.offset}m</strong> pasca ${pName}`;
   }
 }
@@ -847,35 +1161,27 @@ function renderSchedule() {
 
   const studyHours = Math.floor(totalStudyMins / 60);
   const studyRemMins = totalStudyMins % 60;
-  const studyStr = studyHours > 0
-    ? `${studyHours}j ${studyRemMins > 0 ? studyRemMins + 'm' : ''}`
-    : `${studyRemMins} mnt`;
+  const hoursDisplay = studyHours > 0 ? `${studyHours}j ${studyRemMins}m` : `${studyRemMins}m`;
 
-  const summaryHoursEl = document.getElementById('summaryStudyHours');
-  const summarySessionsEl = document.getElementById('summaryStudySessions');
-  if (summaryHoursEl) summaryHoursEl.textContent = studyStr;
-  if (summarySessionsEl) summarySessionsEl.textContent = `${studySessions} Sesi`;
+  const hoursEl = document.getElementById('summaryStudyHours');
+  const sessionsEl = document.getElementById('summaryStudySessions');
+  if (hoursEl) hoursEl.textContent = hoursDisplay;
+  if (sessionsEl) sessionsEl.textContent = `${studySessions} Sesi`;
 
-  // Render Timeline
-  timelineEl.innerHTML = filteredEvents.map(e => {
-    let itemClass = `timeline-item timeline-item--${e.type}`;
-    let timeDisplay = e.time;
-    if (e.endTime) timeDisplay += ` — ${e.endTime}`;
-
-    return `
-      <div class="${itemClass}">
-        <div class="timeline-item__dot"></div>
-        <div class="timeline-item__content">
-          <div class="timeline-item__time">${timeDisplay}</div>
-          <div class="timeline-item__label">${e.title}</div>
-          <div class="timeline-item__detail">${e.detail}</div>
-        </div>
-      </div>`;
-  }).join('');
+  // Render Timeline Elements
+  timelineEl.innerHTML = filteredEvents.map(e => `
+    <div class="timeline-item timeline-item--${e.category}">
+      <div class="timeline-time">${e.time}</div>
+      <div class="timeline-content">
+        <div class="timeline-title">${e.title}</div>
+        <div class="timeline-detail">${e.detail}</div>
+      </div>
+    </div>
+  `).join('');
 }
 
 /* =============================================
-   LIVE CLOCK & BENTO HERO SYNCHRONIZER
+   LIVE CLOCK & HERO CARD COUNTDOWN
    ============================================= */
 function startClock() {
   updateClock();
@@ -884,72 +1190,88 @@ function startClock() {
 
 function updateClock() {
   const now = new Date();
-  const h = String(now.getHours()).padStart(2, '0');
-  const m = String(now.getMinutes()).padStart(2, '0');
-  const s = String(now.getSeconds()).padStart(2, '0');
+  const tz = state.location.tzLabel;
+  const timeStr = [now.getHours(), now.getMinutes(), now.getSeconds()]
+    .map(n => String(n).padStart(2, '0'))
+    .join(':');
 
   const clockEl = document.getElementById('clockTime');
-  if (clockEl) clockEl.textContent = `${h}:${m}:${s} WITA`;
+  if (clockEl) clockEl.textContent = `${timeStr} ${tz}`;
 
-  if (!state.loaded) return;
+  if (state.loaded) {
+    updateHeroCountdown();
+  }
+}
 
-  const nowSecs = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-  const nowMins = now.getHours() * 60 + now.getMinutes();
+function updateHeroCountdown() {
+  const now = new Date();
+  const nowSecs = (now.getHours() * 3600) + (now.getMinutes() * 60) + now.getSeconds();
 
   const heroName = document.getElementById('heroPrayerName');
   const heroAdzan = document.getElementById('heroAdzanTime');
+  const heroCountdown = document.getElementById('heroCountdownTimer');
   const heroIcon = document.getElementById('heroIcon');
   const heroArabic = document.getElementById('heroArabicCalligraphy');
-  const heroCountdown = document.getElementById('heroCountdownTimer');
   const heroIqomah = document.getElementById('heroIqomahTime');
   const heroDepart = document.getElementById('heroDepartTime');
   const heroProgressBar = document.getElementById('heroProgressBar');
 
-  let prevPrayer = null;
+  const travel = state.sleepConfig.globalTravel;
+
   let nextPrayer = null;
+  let nextPrayerSecs = null;
+  let prevPrayerSecs = 0;
 
   for (let i = 0; i < PRAYERS.length; i++) {
     const p = PRAYERS[i];
-    const pMins = timeToMinutes(state.prayerTimes[p.id]);
-    if (pMins > nowMins) {
-      nextPrayer = { prayer: p, minutes: pMins };
-      prevPrayer = i > 0 ? { prayer: PRAYERS[i - 1], minutes: timeToMinutes(state.prayerTimes[PRAYERS[i - 1].id]) } : null;
+    const timeStr = state.prayerTimes[p.id];
+    if (!timeStr) continue;
+    const pSecs = timeToMinutes(timeStr) * 60;
+
+    if (pSecs > nowSecs) {
+      nextPrayer = p;
+      nextPrayerSecs = pSecs;
+      if (i > 0) {
+        prevPrayerSecs = timeToMinutes(state.prayerTimes[PRAYERS[i - 1].id]) * 60;
+      }
       break;
     }
   }
 
-  const travel = state.sleepConfig.globalTravel;
+  const tz = state.location.tzLabel;
 
   if (nextPrayer) {
-    const p = nextPrayer.prayer;
-    const adzanTime = state.prayerTimes[p.id];
-    const s = state.settings[p.id];
+    const adzanTime = state.prayerTimes[nextPrayer.id];
+    const s = state.settings[nextPrayer.id];
     const iqomahTime = addMinutes(adzanTime, s.iqomah);
     const departTime = subtractMinutes(iqomahTime, travel);
 
-    if (heroName) heroName.textContent = p.name;
-    if (heroAdzan) heroAdzan.textContent = `${adzanTime} WITA`;
-    if (heroIcon) heroIcon.textContent = p.icon;
-    if (heroArabic) heroArabic.textContent = p.arabic;
+    if (heroName) heroName.textContent = nextPrayer.name;
+    if (heroAdzan) heroAdzan.textContent = `${adzanTime} ${tz}`;
+    if (heroIcon) heroIcon.textContent = nextPrayer.icon;
+    if (heroArabic) heroArabic.textContent = nextPrayer.arabic;
     if (heroIqomah) heroIqomah.textContent = iqomahTime;
     if (heroDepart) heroDepart.textContent = departTime;
 
-    const nextSecs = nextPrayer.minutes * 60;
-    const diffSecs = nextSecs - nowSecs;
+    const diffSecs = nextPrayerSecs - nowSecs;
     const dh = Math.floor(diffSecs / 3600);
     const dm = Math.floor((diffSecs % 3600) / 60);
     const ds = diffSecs % 60;
 
-    const countdownStr = dh > 0 ? `${dh}j ${dm}m ${ds}s` : `${dm}m ${ds}s`;
+    let countdownStr = '';
+    if (dh > 0) countdownStr += `${dh}j `;
+    countdownStr += `${dm}m ${ds}s`;
+
     if (heroCountdown) heroCountdown.textContent = countdownStr;
 
     if (heroProgressBar) {
-      const prevSecs = prevPrayer ? prevPrayer.minutes * 60 : (nextPrayer.minutes - 180) * 60;
-      const totalSpan = Math.max(1, nextSecs - prevSecs);
-      const elapsed = Math.max(0, nowSecs - prevSecs);
+      const nextSecs = nextPrayerSecs;
+      const totalSpan = Math.max(1, nextSecs - prevPrayerSecs);
+      const elapsed = Math.max(0, nowSecs - prevPrayerSecs);
       const pct = clamp(Math.round((elapsed / totalSpan) * 100), 5, 98);
       heroProgressBar.style.width = `${pct}%`;
     }
+
   } else {
     const fajr = PRAYERS[0];
     const fajrAdzan = state.prayerTimes['fajr'];
@@ -958,7 +1280,7 @@ function updateClock() {
     const departTime = subtractMinutes(iqomahTime, travel);
 
     if (heroName) heroName.textContent = 'Subuh Besok';
-    if (heroAdzan) heroAdzan.textContent = `${fajrAdzan} WITA`;
+    if (heroAdzan) heroAdzan.textContent = `${fajrAdzan} ${tz}`;
     if (heroIcon) heroIcon.textContent = fajr.icon;
     if (heroArabic) heroArabic.textContent = fajr.arabic;
     if (heroIqomah) heroIqomah.textContent = iqomahTime;

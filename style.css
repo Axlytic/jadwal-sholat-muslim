@@ -1157,3 +1157,277 @@ a:hover { opacity: .8; }
   padding: .2rem .45rem;
   border-radius: 4px;
 }
+
+
+/* =============================================
+   GPS LOCATION & IHTIYAT STYLING
+   ============================================= */
+/* Interactive Location Pill */
+.location-pill--interactive {
+  cursor: pointer;
+  background: rgba(14, 165, 233, 0.1);
+  border: 1px solid rgba(14, 165, 233, 0.28);
+  transition: all .25s ease;
+  font-family: var(--font-sans);
+  color: var(--cyan-400);
+}
+.location-pill--interactive:hover {
+  background: rgba(14, 165, 233, 0.18);
+  border-color: rgba(14, 165, 233, 0.5);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(14, 165, 233, 0.25);
+}
+.location-pill--interactive:active {
+  transform: translateY(0);
+}
+.gps-dot-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  display: inline-block;
+  margin-left: .2rem;
+}
+.gps-dot-indicator.is-gps {
+  background: var(--emerald-400);
+  box-shadow: 0 0 8px var(--emerald-400);
+  animation: pulse-dot 2s infinite;
+}
+
+/* Top Ihtiyat Pill */
+.ihtiyat-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  padding: .35rem .65rem;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  border-radius: 20px;
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--emerald-400);
+  letter-spacing: .02em;
+}
+.ihtiyat-pill.is-disabled {
+  background: rgba(255, 255, 255, 0.05);
+  border-color: rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+}
+.ihtiyat-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--emerald-400);
+}
+.ihtiyat-pill.is-disabled .ihtiyat-dot {
+  background: var(--text-muted);
+}
+
+/* Drawer Section Titles */
+.drawer-section-title {
+  font-size: .78rem;
+  font-weight: 800;
+  color: var(--cyan-400);
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  margin-bottom: .6rem;
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+}
+
+/* Location Card in Drawer */
+.config-grid--location {
+  grid-template-columns: 1.25fr 1fr;
+  margin-bottom: .5rem;
+}
+@media (max-width: 768px) {
+  .config-grid--location {
+    grid-template-columns: 1fr;
+  }
+}
+.config-box--location {
+  display: flex;
+  flex-direction: column;
+  gap: .65rem;
+}
+.location-status-row {
+  display: flex;
+  flex-direction: column;
+  gap: .2rem;
+}
+.location-current-name {
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+.location-coords {
+  font-size: .75rem;
+  color: var(--text-muted);
+  font-family: monospace;
+}
+.gps-btn-group {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+}
+.btn-gps {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  padding: .5rem .9rem;
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.2), rgba(16, 185, 129, 0.2));
+  border: 1px solid rgba(14, 165, 233, 0.4);
+  color: #ffffff;
+  border-radius: var(--radius-xs);
+  font-family: var(--font-sans);
+  font-size: .78rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .25s ease;
+}
+.btn-gps:hover:not(:disabled) {
+  background: linear-gradient(135deg, rgba(14, 165, 233, 0.35), rgba(16, 185, 129, 0.35));
+  border-color: var(--cyan-400);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(14, 165, 233, 0.3);
+}
+.btn-gps:disabled {
+  opacity: .6;
+  cursor: not-allowed;
+}
+.btn-gps-reset {
+  padding: .5rem .75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-muted);
+  border-radius: var(--radius-xs);
+  font-family: var(--font-sans);
+  font-size: .75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+}
+.btn-gps-reset:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+.gps-feedback {
+  font-size: .75rem;
+  font-weight: 600;
+  padding: .35rem .6rem;
+  border-radius: var(--radius-xs);
+}
+.gps-feedback.status-loading {
+  background: rgba(14, 165, 233, 0.1);
+  color: var(--cyan-400);
+  border: 1px solid rgba(14, 165, 233, 0.2);
+}
+.gps-feedback.status-success {
+  background: rgba(16, 185, 129, 0.12);
+  color: var(--emerald-400);
+  border: 1px solid rgba(16, 185, 129, 0.25);
+}
+.gps-feedback.status-error {
+  background: rgba(239, 68, 68, 0.12);
+  color: #f87171;
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+/* Ihtiyat Card in Drawer */
+.config-box--ihtiyat {
+  display: flex;
+  flex-direction: column;
+  gap: .55rem;
+}
+.ihtiyat-desc {
+  font-size: .74rem;
+  color: var(--text-muted);
+  line-height: 1.45;
+  margin: 0;
+}
+
+/* iOS/Mobbin Switch Toggle */
+.switch-toggle {
+  position: relative;
+  display: inline-block;
+  width: 42px;
+  height: 23px;
+  cursor: pointer;
+}
+.switch-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.switch-toggle .slider {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: .25s ease;
+  border-radius: 24px;
+}
+.switch-toggle .slider:before {
+  position: absolute;
+  content: "";
+  height: 17px;
+  width: 17px;
+  left: 2px;
+  bottom: 2px;
+  background-color: #ffffff;
+  transition: .25s ease;
+  border-radius: 50%;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.4);
+}
+.switch-toggle input:checked + .slider {
+  background-color: var(--emerald-500);
+  border-color: var(--emerald-400);
+  box-shadow: 0 0 10px rgba(16, 185, 129, 0.4);
+}
+.switch-toggle input:checked + .slider:before {
+  transform: translateX(19px);
+}
+
+/* Prayer Card Tabs & Panes */
+.prayer-card__tabs {
+  display: flex;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 3px;
+  margin: .75rem 0 .5rem;
+}
+.prayer-tab {
+  flex: 1;
+  background: transparent;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding: .35rem 0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .3rem;
+}
+.prayer-tab:hover {
+  color: var(--text-primary);
+}
+.prayer-tab.is-active {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+.prayer-pane {
+  display: none;
+}
+.prayer-pane.is-active {
+  display: block;
+  animation: fadeUp .25s var(--ease-spring);
+}

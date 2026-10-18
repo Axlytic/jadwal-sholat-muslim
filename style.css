@@ -1611,3 +1611,26 @@ a:hover { opacity: .8; }
 .iqomah-pane-hint strong {
   color: var(--cyan-400);
 }
+
+/* Privacy Guarantee Note */
+.privacy-note {
+  display: flex;
+  align-items: flex-start;
+  gap: .4rem;
+  font-size: .68rem;
+  color: var(--text-muted);
+  background: rgba(16, 185, 129, 0.06);
+  border: 1px dashed rgba(16, 185, 129, 0.2);
+  padding: .35rem .6rem;
+  border-radius: var(--radius-xs);
+  margin-top: .4rem;
+  line-height: 1.4;
+}
+.privacy-note strong {
+  color: var(--emerald-400);
+}
+.privacy-note__icon {
+  font-size: .75rem;
+  flex-shrink: 0;
+  margin-top: .05rem;
+}

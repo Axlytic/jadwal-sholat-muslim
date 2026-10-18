@@ -1071,7 +1071,7 @@ function renderPrayerCards() {
           </div>
         `}
 
-        <button type="button" class="btn-card-edit" data-action="open-edit-modal" data-prayer="${p.id}">
+        <button type="button" class="btn-card-edit" onclick="openPrayerEditModal('${p.id}')">
           <span>✏️</span> Atur Waktu & Belajar
         </button>
       </div>
@@ -2010,3 +2010,9 @@ function checkAlarmTriggers(now) {
     }
   });
 }
+
+
+window.switchView = switchView;
+window.openPrayerEditModal = openPrayerEditModal;
+window.closePrayerEditModal = closePrayerEditModal;
+window.savePrayerEditModal = savePrayerEditModal;

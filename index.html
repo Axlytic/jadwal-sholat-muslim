@@ -83,16 +83,16 @@
     <!-- ===== MODERN SEGMENTED TABS NAV ===== -->
     <div class="tabs-nav-container">
       <nav class="mizan-tabs-nav" role="tablist" aria-label="Navigasi Utama Mizan">
-        <button type="button" class="tab-nav-btn is-active" data-view="prayers" role="tab" aria-selected="true" id="tabBtnPrayers">
+        <button type="button" class="tab-nav-btn is-active" data-view="prayers" role="tab" aria-selected="true" id="tabBtnPrayers" onclick="switchView('prayers')">
           <span class="tab-nav-icon">🕌</span>
           <span class="tab-nav-label">Jadwal Sholat</span>
         </button>
-        <button type="button" class="tab-nav-btn" data-view="productivity" role="tab" aria-selected="false" id="tabBtnProductivity">
+        <button type="button" class="tab-nav-btn" data-view="productivity" role="tab" aria-selected="false" id="tabBtnProductivity" onclick="switchView('productivity')">
           <span class="tab-nav-icon">📅</span>
           <span class="tab-nav-label">Agenda Produktif</span>
           <span class="tab-nav-badge" id="tabProductivityBadge">Alur Hari</span>
         </button>
-        <button type="button" class="tab-nav-btn" data-view="settings" role="tab" aria-selected="false" id="tabBtnSettings">
+        <button type="button" class="tab-nav-btn" data-view="settings" role="tab" aria-selected="false" id="tabBtnSettings" onclick="switchView('settings')">
           <span class="tab-nav-icon">⚙️</span>
           <span class="tab-nav-label">Pengaturan</span>
         </button>

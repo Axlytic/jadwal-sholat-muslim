@@ -79,6 +79,12 @@
           <span id="topIhtiyatText">Ihtiyat +2m</span>
         </div>
 
+        <!-- Alarm Status Pill -->
+        <button class="alarm-pill" id="topAlarmBtn" type="button" title="Pengaturan Alarm & Notifikasi Sholat">
+          <span class="alarm-bell-icon" id="topAlarmIcon">🔔</span>
+          <span id="topAlarmText">Alarm Aktif</span>
+        </button>
+
         <!-- Open Settings Drawer Button -->
         <button class="btn-config-pill" id="btnToggleSleepConfig" type="button">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -310,6 +316,106 @@
           </div>
         </div>
       </div>
+
+      <!-- ROW 3: ALARM & AUDIO PRAYER NOTIFICATION -->
+      <div class="drawer-section-title" id="drawerAlarmSection" style="margin-top: 1.25rem;">🔔 Alarm & Audio Pengingat Waktu Sholat</div>
+      <div class="config-grid config-grid--alarm">
+        <!-- Card 1: Sound & Notification Controls -->
+        <div class="config-box config-box--alarm-audio">
+          <div class="smart-box__header">
+            <span class="smart-box__title">🔊 Suara Pengingat & Notifikasi</span>
+            <label class="switch-toggle" title="Aktifkan/Nonaktifkan Pengingat Suara">
+              <input type="checkbox" id="toggleAlarmMaster" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+
+          <div class="alarm-controls-grid">
+            <div class="alarm-control-item">
+              <label for="alarmSoundSelect" class="alarm-label">Pilihan Nada:</label>
+              <select id="alarmSoundSelect" class="alarm-select">
+                <option value="adhan_melody">🕌 Harmoni Melodi Adzan (Maqam Hijaz)</option>
+                <option value="soft_chime">✨ Genta / Chime Islami Lembut</option>
+                <option value="beep_alert">⏰ Beep Nada Modern</option>
+              </select>
+            </div>
+
+            <div class="alarm-control-item">
+              <div class="alarm-vol-header">
+                <label for="alarmVolumeSlider" class="alarm-label">Volume:</label>
+                <span class="volume-val" id="alarmVolumeValue">80%</span>
+              </div>
+              <div class="alarm-volume-slider-wrap">
+                <span class="vol-icon">🔉</span>
+                <input type="range" id="alarmVolumeSlider" min="0" max="100" value="80" class="alarm-slider">
+                <span class="vol-icon">🔊</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="alarm-actions-row">
+            <button type="button" class="btn-test-sound" id="btnTestSound">
+              <span id="btnTestSoundIcon">▶</span>
+              <span id="btnTestSoundText">Uji Coba Suara</span>
+            </button>
+            <button type="button" class="btn-permission-notif" id="btnRequestNotifPermission">
+              <span id="notifBtnIcon">🔔</span>
+              <span id="notifBtnText">Aktifkan Notifikasi Layar</span>
+            </button>
+          </div>
+          <div class="notif-status-badge" id="notifStatusBadge">
+            Notifikasi browser berdering saat tab berada di latar belakang
+          </div>
+        </div>
+
+        <!-- Card 2: Prayer Checkbox Chips & Early Reminder -->
+        <div class="config-box config-box--alarm-prayers">
+          <div class="smart-box__header">
+            <span class="smart-box__title">⏱️ Waktu Sholat yang Diingatkan</span>
+          </div>
+
+          <div class="early-reminder-toggle-wrap">
+            <label class="early-reminder-label">
+              <input type="checkbox" id="toggleEarlyReminder" checked>
+              <span>Ingatkan <strong>10 menit sebelum</strong> waktu adzan tiba (Bersiap-siap)</span>
+            </label>
+          </div>
+
+          <div class="alarm-chips-legend">Pilih sholat aktif:</div>
+          <div class="prayer-alarm-chips" id="prayerAlarmChips">
+            <label class="alarm-chip is-active" data-prayer="fajr">
+              <input type="checkbox" id="alarmPrayer_fajr" checked>
+              <span class="chip-dot"></span>
+              <span class="chip-name">Subuh</span>
+            </label>
+            <label class="alarm-chip is-active" data-prayer="dhuhr">
+              <input type="checkbox" id="alarmPrayer_dhuhr" checked>
+              <span class="chip-dot"></span>
+              <span class="chip-name">Dzuhur</span>
+            </label>
+            <label class="alarm-chip is-active" data-prayer="asr">
+              <input type="checkbox" id="alarmPrayer_asr" checked>
+              <span class="chip-dot"></span>
+              <span class="chip-name">Ashar</span>
+            </label>
+            <label class="alarm-chip is-active" data-prayer="maghrib">
+              <input type="checkbox" id="alarmPrayer_maghrib" checked>
+              <span class="chip-dot"></span>
+              <span class="chip-name">Maghrib</span>
+            </label>
+            <label class="alarm-chip is-active" data-prayer="isha">
+              <input type="checkbox" id="alarmPrayer_isha" checked>
+              <span class="chip-dot"></span>
+              <span class="chip-name">Isya</span>
+            </label>
+          </div>
+
+          <div class="alarm-hint-box">
+            <span>💡</span>
+            <span>Alarm layar & suara akan muncul otomatis begitu jam perangkat mencapai jadwal sholat yang aktif.</span>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- ===== 5 PRAYER CARDS ===== -->
@@ -359,5 +465,44 @@
   </div>
 
   <script src="app.js"></script>
+
+  <!-- ===== FULLSCREEN GLASSMORPHISM ALARM MODAL ===== -->
+  <div class="alarm-modal-backdrop is-hidden" id="alarmModal" role="dialog" aria-modal="true">
+    <div class="alarm-modal-dialog">
+      <div class="alarm-modal-glow"></div>
+      
+      <div class="alarm-modal-icon-wrap">
+        <div class="alarm-pulse-rings">
+          <span class="ring ring-1"></span>
+          <span class="ring ring-2"></span>
+        </div>
+        <span class="alarm-modal-icon" id="alarmModalIcon">🕌</span>
+      </div>
+
+      <div class="alarm-modal-header">
+        <span class="alarm-badge-tag" id="alarmModalBadge">WAKTU SHOLAT TELAH TIBA</span>
+        <h2 class="alarm-modal-title" id="alarmModalTitle">Waktu Sholat Maghrib</h2>
+        <div class="alarm-modal-time" id="alarmModalTime">18:24 <span class="alarm-modal-tz" id="alarmModalTz">WITA</span></div>
+      </div>
+
+      <div class="alarm-modal-countdown-card">
+        <div class="iqomah-countdown-label" id="alarmModalCountLabel">Estimasi Iqomah Masjid Dimulai Dalam:</div>
+        <div class="iqomah-countdown-value" id="alarmModalIqomahCount">10:00</div>
+      </div>
+
+      <div class="alarm-modal-doa">
+        <div class="arabic-text">اللَّهُمَّ رَبَّ هَذِهِ الدَّعْوَةِ التَّامَّةِ وَالصَّلَاةِ الْقَائِمَةِ آتِ مُحَمَّدًا الْوَسِيلَةَ وَالْفَضِيلَةَ وَابْعَثْهُ مَقَامًا مَحْمُودًا الَّذِي وَعَدْتَهُ</div>
+        <div class="latin-text">"Allahumma rabba hadzihid-da'watit-tammah, wash-shalatil-qa'imah, ati Muhammadanil-wasilata wal-fadhilah, wab'atshu maqamam-mahmudanil-ladzi wa'adtah."</div>
+        <div class="trans-text">Ya Allah, Pemilik seruan yang sempurna dan sholat yang ditegakkan ini, berikanlah kepada Nabi Muhammad washilah dan keutamaan.</div>
+      </div>
+
+      <div class="alarm-modal-actions">
+        <button type="button" class="btn-alarm-dismiss" id="btnDismissAlarm">
+          <span class="dismiss-icon">🔕</span>
+          <span>Hentikan Alarm & Tutup (Esc)</span>
+        </button>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

@@ -1634,3 +1634,565 @@ a:hover { opacity: .8; }
   flex-shrink: 0;
   margin-top: .05rem;
 }
+
+
+/* =============================================
+   FITUR CERDAS: ALARM & AUDIO PRAYER NOTIFICATION
+   ============================================= */
+
+/* 1. Header Alarm Pill */
+.alarm-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.42rem 0.85rem;
+  background: rgba(245, 158, 11, 0.10);
+  border: 1px solid rgba(245, 158, 11, 0.28);
+  border-radius: 9999px;
+  color: #fbbf24;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  font-family: inherit;
+  box-shadow: 0 2px 8px -2px rgba(245, 158, 11, 0.15);
+}
+
+.alarm-pill:hover {
+  background: rgba(245, 158, 11, 0.18);
+  border-color: rgba(245, 158, 11, 0.45);
+  box-shadow: 0 4px 14px -2px rgba(245, 158, 11, 0.30);
+  transform: translateY(-1px);
+}
+
+.alarm-pill:active {
+  transform: scale(0.97);
+}
+
+.alarm-pill.is-disabled {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.10);
+  color: #94a3b8;
+  box-shadow: none;
+}
+
+.alarm-bell-icon {
+  font-size: 0.85rem;
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.alarm-pill:hover .alarm-bell-icon {
+  transform: rotate(15deg) scale(1.1);
+}
+
+/* 2. Drawer Alarm Controls */
+.config-grid--alarm {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1rem;
+}
+
+.config-box--alarm-audio,
+.config-box--alarm-prayers {
+  background: rgba(18, 25, 38, 0.85);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  padding: 1.25rem;
+  backdrop-filter: blur(16px);
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.alarm-controls-grid {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 0.85rem;
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 640px) {
+  .alarm-controls-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.alarm-control-item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.alarm-label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.alarm-select {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  background: rgba(10, 15, 26, 0.9);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  color: #f1f5f9;
+  font-size: 0.8rem;
+  font-family: inherit;
+  outline: none;
+  cursor: pointer;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.alarm-select:focus {
+  border-color: #fbbf24;
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.25);
+}
+
+.alarm-vol-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.volume-val {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fbbf24;
+}
+
+.alarm-volume-slider-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.45rem 0.6rem;
+  background: rgba(10, 15, 26, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+}
+
+.vol-icon {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.alarm-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 6px;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.15);
+  outline: none;
+  cursor: pointer;
+}
+
+.alarm-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fbbf24;
+  cursor: pointer;
+  box-shadow: 0 0 8px rgba(245, 158, 11, 0.5);
+  transition: transform 0.15s ease;
+}
+
+.alarm-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+.alarm-actions-row {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 0.6rem;
+  margin-top: 0.25rem;
+}
+
+@media (max-width: 520px) {
+  .alarm-actions-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.btn-test-sound {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.85rem;
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.25), rgba(217, 119, 6, 0.35));
+  border: 1px solid rgba(245, 158, 11, 0.45);
+  border-radius: 10px;
+  color: #fef3c7;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.btn-test-sound:hover {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.35), rgba(217, 119, 6, 0.5));
+  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+  transform: translateY(-1px);
+}
+
+.btn-test-sound.is-playing {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.3), rgba(185, 28, 28, 0.4));
+  border-color: rgba(239, 68, 68, 0.5);
+  color: #fee2e2;
+}
+
+.btn-permission-notif {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0.55rem 0.85rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  color: #e2e8f0;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+}
+
+.btn-permission-notif:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.22);
+}
+
+.btn-permission-notif.is-granted {
+  border-color: rgba(16, 185, 129, 0.4);
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.08);
+}
+
+.notif-status-badge {
+  font-size: 0.68rem;
+  color: #64748b;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  line-height: 1.4;
+}
+
+/* 3. Card 2: Prayer Chips & Early Reminder */
+.early-reminder-toggle-wrap {
+  padding: 0.5rem 0.75rem;
+  background: rgba(10, 15, 26, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+}
+
+.early-reminder-label {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-size: 0.76rem;
+  color: #cbd5e1;
+  cursor: pointer;
+}
+
+.early-reminder-label input[type="checkbox"] {
+  accent-color: #fbbf24;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+}
+
+.alarm-chips-legend {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.prayer-alarm-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.alarm-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.45rem 0.8rem;
+  background: rgba(10, 15, 26, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+  border-radius: 9999px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: #94a3b8;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  user-select: none;
+}
+
+.alarm-chip input {
+  display: none;
+}
+
+.alarm-chip .chip-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #64748b;
+  transition: all 0.2s ease;
+}
+
+.alarm-chip.is-active {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.35);
+  color: #fef3c7;
+  box-shadow: 0 2px 8px -1px rgba(245, 158, 11, 0.15);
+}
+
+.alarm-chip.is-active .chip-dot {
+  background: #fbbf24;
+  box-shadow: 0 0 6px #fbbf24;
+}
+
+.alarm-hint-box {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.6rem 0.75rem;
+  background: rgba(245, 158, 11, 0.06);
+  border: 1px dashed rgba(245, 158, 11, 0.2);
+  border-radius: 10px;
+  font-size: 0.72rem;
+  color: #d1d5db;
+  line-height: 1.45;
+}
+
+/* 4. FULLSCREEN GLASSMORPHISM ALARM MODAL */
+.alarm-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(5, 10, 18, 0.86);
+  backdrop-filter: blur(28px);
+  -webkit-backdrop-filter: blur(28px);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  animation: alarmBackdropFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.alarm-modal-backdrop.is-hidden {
+  display: none !important;
+}
+
+@keyframes alarmBackdropFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.alarm-modal-dialog {
+  max-width: 520px;
+  width: 100%;
+  background: #0d1422;
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 28px;
+  padding: 2.25rem 2rem;
+  text-align: center;
+  box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.85), 0 0 60px -10px rgba(245, 158, 11, 0.3);
+  position: relative;
+  overflow: hidden;
+  animation: alarmDialogZoomIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes alarmDialogZoomIn {
+  from { opacity: 0; transform: scale(0.92) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.alarm-modal-glow {
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 240px;
+  height: 120px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.35) 0%, transparent 70%);
+  filter: blur(24px);
+  pointer-events: none;
+}
+
+.alarm-modal-icon-wrap {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.alarm-modal-icon {
+  font-size: 2.75rem;
+  z-index: 2;
+  filter: drop-shadow(0 4px 12px rgba(245, 158, 11, 0.4));
+}
+
+.alarm-pulse-rings {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.alarm-pulse-rings .ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 2px solid rgba(245, 158, 11, 0.4);
+  animation: alarmPulseRing 2s infinite cubic-bezier(0.215, 0.61, 0.355, 1);
+}
+
+.alarm-pulse-rings .ring-1 {
+  width: 70px;
+  height: 70px;
+}
+
+.alarm-pulse-rings .ring-2 {
+  width: 90px;
+  height: 90px;
+  animation-delay: 0.6s;
+}
+
+@keyframes alarmPulseRing {
+  0% { transform: scale(0.8); opacity: 0.8; }
+  100% { transform: scale(1.6); opacity: 0; }
+}
+
+.alarm-badge-tag {
+  display: inline-block;
+  padding: 0.3rem 0.85rem;
+  background: rgba(245, 158, 11, 0.15);
+  border: 1px solid rgba(245, 158, 11, 0.4);
+  border-radius: 9999px;
+  color: #fef08a;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.65rem;
+}
+
+.alarm-modal-title {
+  font-size: 1.65rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin: 0 0 0.35rem;
+  letter-spacing: -0.02em;
+}
+
+.alarm-modal-time {
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: #fbbf24;
+  margin-bottom: 1.25rem;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+}
+
+.alarm-modal-tz {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #94a3b8;
+}
+
+.alarm-modal-countdown-card {
+  background: rgba(15, 23, 42, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  padding: 0.85rem 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.iqomah-countdown-label {
+  font-size: 0.75rem;
+  color: #94a3b8;
+  margin-bottom: 0.25rem;
+}
+
+.iqomah-countdown-value {
+  font-size: 1.45rem;
+  font-weight: 700;
+  color: #34d399;
+  font-variant-numeric: tabular-nums;
+}
+
+.alarm-modal-doa {
+  background: rgba(245, 158, 11, 0.05);
+  border: 1px solid rgba(245, 158, 11, 0.15);
+  border-radius: 14px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.alarm-modal-doa .arabic-text {
+  font-family: 'Amiri', serif;
+  font-size: 1.2rem;
+  color: #fde68a;
+  line-height: 1.8;
+  margin-bottom: 0.5rem;
+}
+
+.alarm-modal-doa .latin-text {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  font-style: italic;
+  margin-bottom: 0.35rem;
+  line-height: 1.4;
+}
+
+.alarm-modal-doa .trans-text {
+  font-size: 0.72rem;
+  color: #cbd5e1;
+  line-height: 1.4;
+}
+
+.alarm-modal-actions {
+  display: flex;
+  justify-content: center;
+}
+
+.btn-alarm-dismiss {
+  width: 100%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.55rem;
+  padding: 0.85rem 1.5rem;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  border: none;
+  border-radius: 14px;
+  color: #0f172a;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: inherit;
+  box-shadow: 0 4px 18px rgba(245, 158, 11, 0.4);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-alarm-dismiss:hover {
+  background: linear-gradient(135deg, #fbbf24, #f59e0b);
+  box-shadow: 0 6px 24px rgba(245, 158, 11, 0.55);
+  transform: translateY(-2px);
+}
+
+.btn-alarm-dismiss:active {
+  transform: scale(0.98);
+}

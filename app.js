@@ -21,6 +21,21 @@ const DEFAULT_IHTIYAT = {
   minutes: 2, // Standar Kemenag RI: +2 Menit
 };
 
+const DEFAULT_ALARM = {
+  enabled: true,
+  soundType: 'adhan_melody', // 'adhan_melody' | 'soft_chime' | 'beep_alert'
+  volume: 80,                // 0 - 100
+  notifyEarly: true,         // 10 menit jelang adzan
+  notifyAtAdzan: true,       // tepat waktu adzan
+  prayers: {
+    fajr: true,
+    dhuhr: true,
+    asr: true,
+    maghrib: true,
+    isha: true,
+  },
+};
+
 const PRAYERS = [
   { id: 'fajr',    apiKey: 'Fajr',    name: 'Subuh',   arabic: 'الفجر',  icon: '🌅', defaultOn: true,  defaultOffset: 30,  defaultDuration: 120, defaultIqomah: 20 },
   { id: 'dhuhr',   apiKey: 'Dhuhr',   name: 'Dzuhur',  arabic: 'الظهر',  icon: '☀️', defaultOn: true,  defaultOffset: 30,  defaultDuration: 120, defaultIqomah: 12 },
@@ -51,6 +66,11 @@ let state = {
     sleepInputMode: 'minute', // 'minute' | 'time'
     wakeInputMode: 'minute',  // 'minute' | 'time'
   },
+  alarmConfig: {
+    ...DEFAULT_ALARM,
+    prayers: { ...DEFAULT_ALARM.prayers },
+  },
+  lastTriggeredAlarm: null,
   activeFilter: 'all',
   loaded: false,
 };
@@ -127,6 +147,24 @@ function loadSettings() {
     state.sleepConfig.wakeInputMode = saved.sleep.wakeInputMode ?? 'minute';
   }
 
+  // 5. Alarm Settings
+  if (saved && saved.alarm) {
+    state.alarmConfig.enabled = saved.alarm.enabled ?? DEFAULT_ALARM.enabled;
+    state.alarmConfig.soundType = saved.alarm.soundType ?? DEFAULT_ALARM.soundType;
+    state.alarmConfig.volume = saved.alarm.volume ?? DEFAULT_ALARM.volume;
+    state.alarmConfig.notifyEarly = saved.alarm.notifyEarly ?? DEFAULT_ALARM.notifyEarly;
+    state.alarmConfig.notifyAtAdzan = saved.alarm.notifyAtAdzan ?? DEFAULT_ALARM.notifyAtAdzan;
+    if (saved.alarm.prayers) {
+      state.alarmConfig.prayers = {
+        fajr: saved.alarm.prayers.fajr ?? true,
+        dhuhr: saved.alarm.prayers.dhuhr ?? true,
+        asr: saved.alarm.prayers.asr ?? true,
+        maghrib: saved.alarm.prayers.maghrib ?? true,
+        isha: saved.alarm.prayers.isha ?? true,
+      };
+    }
+  }
+
   // Sync inputs
   const sleepMinInput = document.getElementById('sleepAfterIshaInput');
   const wakeMinInput = document.getElementById('wakeBeforeFajrInput');
@@ -142,6 +180,7 @@ function loadSettings() {
   updateIhtiyatUI();
   updateSleepModeUI();
   updateWakeModeUI();
+  updateAlarmUI();
 }
 
 function saveSettings() {
@@ -150,6 +189,7 @@ function saveSettings() {
     ihtiyat: state.ihtiyat,
     prayers: state.settings,
     sleep: state.sleepConfig,
+    alarm: state.alarmConfig,
   };
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(dataToSave));
@@ -325,6 +365,121 @@ function initEventListeners() {
       renderSchedule();
     });
   }
+
+  // 5. Top Bar Alarm Pill
+  const topAlarmBtn = document.getElementById('topAlarmBtn');
+  if (topAlarmBtn) {
+    topAlarmBtn.addEventListener('click', () => {
+      const panel = document.getElementById('sleepConfigPanel');
+      const btnText = document.getElementById('btnToggleSleepConfigText');
+      if (panel && panel.classList.contains('is-hidden')) {
+        panel.classList.remove('is-hidden');
+        if (btnText) btnText.textContent = 'Tutup Pengaturan';
+      }
+      const section = document.getElementById('drawerAlarmSection');
+      if (section) section.scrollIntoView({ behavior: 'smooth' });
+    });
+  }
+
+  // 6. Alarm Master Switch
+  const toggleAlarmMaster = document.getElementById('toggleAlarmMaster');
+  if (toggleAlarmMaster) {
+    toggleAlarmMaster.addEventListener('change', (e) => {
+      state.alarmConfig.enabled = e.target.checked;
+      updateAlarmUI();
+      saveSettings();
+    });
+  }
+
+  // 7. Sound Type Selection
+  const alarmSoundSelect = document.getElementById('alarmSoundSelect');
+  if (alarmSoundSelect) {
+    alarmSoundSelect.addEventListener('change', (e) => {
+      state.alarmConfig.soundType = e.target.value;
+      saveSettings();
+      playConfiguredAlarmSound();
+    });
+  }
+
+  // 8. Volume Slider
+  const alarmVolumeSlider = document.getElementById('alarmVolumeSlider');
+  const alarmVolumeValue = document.getElementById('alarmVolumeValue');
+  if (alarmVolumeSlider) {
+    alarmVolumeSlider.addEventListener('input', (e) => {
+      const val = Number(e.target.value);
+      state.alarmConfig.volume = val;
+      if (alarmVolumeValue) alarmVolumeValue.textContent = `${val}%`;
+    });
+    alarmVolumeSlider.addEventListener('change', () => {
+      saveSettings();
+    });
+  }
+
+  // 9. Sound Test Button
+  const btnTestSound = document.getElementById('btnTestSound');
+  const btnTestSoundIcon = document.getElementById('btnTestSoundIcon');
+  const btnTestSoundText = document.getElementById('btnTestSoundText');
+  if (btnTestSound) {
+    btnTestSound.addEventListener('click', () => {
+      if (isPlayingSoundTest) {
+        stopAudio();
+      } else {
+        isPlayingSoundTest = true;
+        btnTestSound.classList.add('is-playing');
+        if (btnTestSoundIcon) btnTestSoundIcon.textContent = '⏹️';
+        if (btnTestSoundText) btnTestSoundText.textContent = 'Hentikan Suara';
+        playConfiguredAlarmSound();
+      }
+    });
+  }
+
+  // 10. Web Notification Permission Button
+  const btnRequestNotif = document.getElementById('btnRequestNotifPermission');
+  if (btnRequestNotif) {
+    btnRequestNotif.addEventListener('click', () => {
+      requestNotificationPermission();
+    });
+  }
+
+  // 11. Early Reminder Checkbox
+  const toggleEarly = document.getElementById('toggleEarlyReminder');
+  if (toggleEarly) {
+    toggleEarly.addEventListener('change', (e) => {
+      state.alarmConfig.notifyEarly = e.target.checked;
+      saveSettings();
+    });
+  }
+
+  // 12. Individual Prayer Alarm Chips
+  PRAYERS.forEach(p => {
+    const chip = document.querySelector(`.alarm-chip[data-prayer="${p.id}"]`);
+    const input = document.getElementById(`alarmPrayer_${p.id}`);
+    if (chip && input) {
+      chip.addEventListener('click', (e) => {
+        if (e.target !== input) {
+          input.checked = !input.checked;
+        }
+        state.alarmConfig.prayers[p.id] = input.checked;
+        chip.classList.toggle('is-active', input.checked);
+        saveSettings();
+      });
+    }
+  });
+
+  // 13. Dismiss Alarm Modal
+  const btnDismiss = document.getElementById('btnDismissAlarm');
+  if (btnDismiss) {
+    btnDismiss.addEventListener('click', dismissAlarmModal);
+  }
+  const alarmModal = document.getElementById('alarmModal');
+  if (alarmModal) {
+    alarmModal.addEventListener('click', (e) => {
+      if (e.target === alarmModal) dismissAlarmModal();
+    });
+  }
+  window.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') dismissAlarmModal();
+  });
 }
 
 /* =============================================
@@ -1198,6 +1353,7 @@ function updateClock() {
 
   if (state.loaded) {
     updateHeroCountdown();
+    checkAlarmTriggers(now);
   }
 }
 
@@ -1344,4 +1500,401 @@ function formatDuration(mins) {
 
 function clamp(val, min, max) {
   return Math.max(min, Math.min(max, val));
+}
+
+
+/* =============================================
+   FITUR CERDAS: AUDIO ADZAN, ALARM & NOTIFIKASI
+   ============================================= */
+let audioCtx = null;
+let activeOscillators = [];
+let isPlayingSoundTest = false;
+let alarmCountdownTimer = null;
+
+function getAudioContext() {
+  if (!audioCtx) {
+    const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+    if (AudioContextClass) audioCtx = new AudioContextClass();
+  }
+  if (audioCtx && audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+  return audioCtx;
+}
+
+function stopAudio() {
+  activeOscillators.forEach(osc => {
+    try { osc.stop(); } catch(e) {}
+  });
+  activeOscillators = [];
+  
+  const testBtn = document.getElementById('btnTestSound');
+  const testIcon = document.getElementById('btnTestSoundIcon');
+  const testText = document.getElementById('btnTestSoundText');
+  if (testBtn) testBtn.classList.remove('is-playing');
+  if (testIcon) testIcon.textContent = '▶';
+  if (testText) testText.textContent = 'Uji Coba Suara';
+  isPlayingSoundTest = false;
+}
+
+/* 1. Harmoni Melodi Adzan (Maqam Hijaz / Rast - Takbir) */
+function playAdhanMelody(volumePercent = 80) {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  stopAudio();
+
+  const vol = (volumePercent / 100) * 0.45;
+  const masterGain = ctx.createGain();
+  masterGain.gain.setValueAtTime(vol, ctx.currentTime);
+  masterGain.connect(ctx.destination);
+
+  // Catatan Maqam Hijaz: D4, F#4, A4, Bb4, C#5, D5, A4
+  const notes = [
+    { f: 293.66, t: 0.0, d: 0.75 },  // D4
+    { f: 369.99, t: 0.65, d: 0.85 }, // F#4
+    { f: 440.00, t: 1.45, d: 1.15 }, // A4
+    { f: 466.16, t: 2.50, d: 0.70 }, // Bb4
+    { f: 554.37, t: 3.10, d: 0.80 }, // C#5
+    { f: 587.33, t: 3.80, d: 1.50 }, // D5
+    { f: 440.00, t: 5.20, d: 1.80 }, // A4 (meluruh damai)
+  ];
+
+  notes.forEach(n => {
+    const osc1 = ctx.createOscillator();
+    osc1.type = 'sine';
+    osc1.frequency.setValueAtTime(n.f, ctx.currentTime + n.t);
+
+    const osc2 = ctx.createOscillator();
+    osc2.type = 'triangle';
+    osc2.frequency.setValueAtTime(n.f * 2, ctx.currentTime + n.t);
+
+    const filter = ctx.createBiquadFilter();
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(1400, ctx.currentTime + n.t);
+
+    const noteGain = ctx.createGain();
+    const st = ctx.currentTime + n.t;
+    const et = st + n.d;
+
+    noteGain.gain.setValueAtTime(0.0001, st);
+    noteGain.gain.exponentialRampToValueAtTime(0.7, st + 0.15);
+    noteGain.gain.exponentialRampToValueAtTime(0.0001, et);
+
+    osc1.connect(noteGain);
+    osc2.connect(noteGain);
+    noteGain.connect(filter);
+    filter.connect(masterGain);
+
+    osc1.start(st);
+    osc2.start(st);
+    osc1.stop(et);
+    osc2.stop(et);
+
+    activeOscillators.push(osc1, osc2);
+  });
+}
+
+/* 2. Genta / Chime Islami Lembut */
+function playSoftChime(volumePercent = 80) {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  stopAudio();
+
+  const vol = (volumePercent / 100) * 0.45;
+  const masterGain = ctx.createGain();
+  masterGain.gain.setValueAtTime(vol, ctx.currentTime);
+  masterGain.connect(ctx.destination);
+
+  [523.25, 783.99, 1046.5].forEach((freq, idx) => {
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(freq, ctx.currentTime);
+
+    const gain = ctx.createGain();
+    gain.gain.setValueAtTime(0.0001, ctx.currentTime);
+    gain.gain.linearRampToValueAtTime(0.6 / (idx + 1), ctx.currentTime + 0.03);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 3.8);
+
+    osc.connect(gain);
+    gain.connect(masterGain);
+
+    osc.start(ctx.currentTime);
+    osc.stop(ctx.currentTime + 4.0);
+    activeOscillators.push(osc);
+  });
+}
+
+/* 3. Beep Modern Alert */
+function playBeepAlert(volumePercent = 80) {
+  const ctx = getAudioContext();
+  if (!ctx) return;
+  stopAudio();
+
+  const vol = (volumePercent / 100) * 0.4;
+  const masterGain = ctx.createGain();
+  masterGain.gain.setValueAtTime(vol, ctx.currentTime);
+  masterGain.connect(ctx.destination);
+
+  [{ f: 880, t: 0 }, { f: 1174.66, t: 0.18 }].forEach(item => {
+    const osc = ctx.createOscillator();
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(item.f, ctx.currentTime + item.t);
+
+    const gain = ctx.createGain();
+    const st = ctx.currentTime + item.t;
+    gain.gain.setValueAtTime(0.0001, st);
+    gain.gain.linearRampToValueAtTime(0.7, st + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, st + 0.35);
+
+    osc.connect(gain);
+    gain.connect(masterGain);
+
+    osc.start(st);
+    osc.stop(st + 0.4);
+    activeOscillators.push(osc);
+  });
+}
+
+function playConfiguredAlarmSound() {
+  const st = state.alarmConfig.soundType;
+  const vol = state.alarmConfig.volume;
+  if (st === 'soft_chime') {
+    playSoftChime(vol);
+  } else if (st === 'beep_alert') {
+    playBeepAlert(vol);
+  } else {
+    playAdhanMelody(vol);
+  }
+}
+
+/* Update UI Controls from State */
+function updateAlarmUI() {
+  const topAlarmBtn = document.getElementById('topAlarmBtn');
+  const topAlarmText = document.getElementById('topAlarmText');
+  const topAlarmIcon = document.getElementById('topAlarmIcon');
+  const toggleMaster = document.getElementById('toggleAlarmMaster');
+  const soundSelect = document.getElementById('alarmSoundSelect');
+  const volumeSlider = document.getElementById('alarmVolumeSlider');
+  const volumeText = document.getElementById('alarmVolumeValue');
+  const earlyCheck = document.getElementById('toggleEarlyReminder');
+
+  const enabled = state.alarmConfig.enabled;
+
+  if (topAlarmBtn) {
+    if (enabled) {
+      topAlarmBtn.classList.remove('is-disabled');
+      if (topAlarmIcon) topAlarmIcon.textContent = '🔔';
+      if (topAlarmText) topAlarmText.textContent = 'Alarm Aktif';
+    } else {
+      topAlarmBtn.classList.add('is-disabled');
+      if (topAlarmIcon) topAlarmIcon.textContent = '🔕';
+      if (topAlarmText) topAlarmText.textContent = 'Alarm Mati';
+    }
+  }
+
+  if (toggleMaster) toggleMaster.checked = enabled;
+  if (soundSelect) soundSelect.value = state.alarmConfig.soundType;
+  if (volumeSlider) volumeSlider.value = state.alarmConfig.volume;
+  if (volumeText) volumeText.textContent = `${state.alarmConfig.volume}%`;
+  if (earlyCheck) earlyCheck.checked = state.alarmConfig.notifyEarly;
+
+  // Sync prayer chips
+  PRAYERS.forEach(p => {
+    const input = document.getElementById(`alarmPrayer_${p.id}`);
+    const chip = document.querySelector(`.alarm-chip[data-prayer="${p.id}"]`);
+    const isChecked = !!state.alarmConfig.prayers[p.id];
+    if (input) input.checked = isChecked;
+    if (chip) {
+      chip.classList.toggle('is-active', isChecked);
+    }
+  });
+
+  updateNotificationPermissionUI();
+}
+
+function updateNotificationPermissionUI() {
+  const notifBtn = document.getElementById('btnRequestNotifPermission');
+  const notifIcon = document.getElementById('notifBtnIcon');
+  const notifText = document.getElementById('notifBtnText');
+  const notifBadge = document.getElementById('notifStatusBadge');
+
+  if (!('Notification' in window)) {
+    if (notifBtn) notifBtn.style.display = 'none';
+    if (notifBadge) notifBadge.textContent = 'Browser ini tidak mendukung Web Notifications';
+    return;
+  }
+
+  if (Notification.permission === 'granted') {
+    if (notifBtn) {
+      notifBtn.classList.add('is-granted');
+      if (notifIcon) notifIcon.textContent = '✅';
+      if (notifText) notifText.textContent = 'Notifikasi Aktif';
+    }
+    if (notifBadge) notifBadge.innerHTML = '✅ Notifikasi browser aktif & siap berdering di latar belakang.';
+  } else if (Notification.permission === 'denied') {
+    if (notifBtn) {
+      notifBtn.classList.remove('is-granted');
+      if (notifIcon) notifIcon.textContent = '🚫';
+      if (notifText) notifText.textContent = 'Izin Diblokir';
+    }
+    if (notifBadge) notifBadge.innerHTML = '⚠️ Izin notifikasi dinonaktifkan di setelan browser Anda.';
+  } else {
+    if (notifBtn) {
+      notifBtn.classList.remove('is-granted');
+      if (notifIcon) notifIcon.textContent = '🔔';
+      if (notifText) notifText.textContent = 'Aktifkan Notifikasi Layar';
+    }
+    if (notifBadge) notifBadge.innerHTML = 'Klik tombol di atas agar Mizan dapat menampilkan notifikasi saat tab tidak aktif.';
+  }
+}
+
+function requestNotificationPermission() {
+  if (!('Notification' in window)) {
+    alert('Browser Anda tidak mendukung Web Notification API.');
+    return;
+  }
+  Notification.requestPermission().then(permission => {
+    updateNotificationPermissionUI();
+    if (permission === 'granted') {
+      try {
+        new Notification('⚖️ Mizan — Notifikasi Aktif', {
+          body: 'Notifikasi waktu sholat dan pengingat harian berhasil diaktifkan.',
+          icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">⚖️</text></svg>'
+        });
+      } catch(e) {}
+    }
+  });
+}
+
+function sendBrowserNotification(prayer, isEarly) {
+  if (!('Notification' in window)) return;
+  if (Notification.permission !== 'granted') return;
+
+  const adzanTime = state.prayerTimes[prayer.id];
+  const tz = state.location.tzLabel;
+  const iqomahMins = state.settings[prayer.id]?.iqomah || prayer.defaultIqomah;
+
+  const title = isEarly 
+    ? `⏳ 10 Menit Menjelang Sholat ${prayer.name}`
+    : `🕌 Waktu Sholat ${prayer.name} Telah Tiba! (${adzanTime} ${tz})`;
+  const body = isEarly
+    ? `Pukul ${adzanTime} ${tz}. Segera selesaikan kegiatan dan ambil wudhu untuk persiapan ke masjid.`
+    : `Iqomah masjid diperkirakan dalam ${iqomahMins} menit. Mari raih keutamaan sholat awal waktu!`;
+
+  try {
+    new Notification(title, {
+      body: body,
+      icon: 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🕌</text></svg>',
+      tag: `mizan-${prayer.id}`
+    });
+  } catch(e) {}
+}
+
+/* Trigger Modal & Audio */
+function triggerAlarmModal(prayer, isEarly = false) {
+  // 1. Play Audio
+  playConfiguredAlarmSound();
+
+  // 2. Vibrate Device
+  if (navigator.vibrate) {
+    try { navigator.vibrate([300, 150, 300, 150, 500]); } catch(e){}
+  }
+
+  // 3. Send Web Notification
+  sendBrowserNotification(prayer, isEarly);
+
+  // 4. Populate & Reveal Fullscreen Glassmorphism Modal
+  const modal = document.getElementById('alarmModal');
+  const title = document.getElementById('alarmModalTitle');
+  const badge = document.getElementById('alarmModalBadge');
+  const timeEl = document.getElementById('alarmModalTime');
+  const icon = document.getElementById('alarmModalIcon');
+  const countLabel = document.getElementById('alarmModalCountLabel');
+  const countVal = document.getElementById('alarmModalIqomahCount');
+
+  const adzanTime = state.prayerTimes[prayer.id];
+  const tz = state.location.tzLabel;
+  const iqomahMins = state.settings[prayer.id]?.iqomah || prayer.defaultIqomah;
+
+  if (modal) {
+    modal.classList.remove('is-hidden');
+    if (icon) icon.textContent = prayer.icon || '🕌';
+    if (timeEl) timeEl.innerHTML = `${adzanTime} <span class="alarm-modal-tz" id="alarmModalTz">${tz}</span>`;
+
+    if (isEarly) {
+      if (badge) badge.textContent = '⏳ PERSIAPAN (10 MENIT LAGI)';
+      if (title) title.textContent = `Menjelang Waktu Sholat ${prayer.name}`;
+      if (countLabel) countLabel.textContent = 'Waktu Adzan Tiba Dalam:';
+      if (countVal) countVal.textContent = '10:00 Menit';
+    } else {
+      if (badge) badge.textContent = '🕌 WAKTU SHOLAT TELAH TIBA';
+      if (title) title.textContent = `Waktu Sholat ${prayer.name}`;
+      if (countLabel) countLabel.textContent = 'Estimasi Iqomah Masjid Dimulai Dalam:';
+      if (countVal) countVal.textContent = `${iqomahMins}:00 Menit`;
+    }
+
+    // Live countdown timer in modal
+    if (alarmCountdownTimer) clearInterval(alarmCountdownTimer);
+    let remainingSecs = (isEarly ? 10 : iqomahMins) * 60;
+    alarmCountdownTimer = setInterval(() => {
+      remainingSecs--;
+      if (remainingSecs <= 0) {
+        clearInterval(alarmCountdownTimer);
+        if (countVal) countVal.textContent = isEarly ? 'Waktu Adzan Tiba!' : 'Waktu Iqomah Tiba!';
+      } else {
+        const m = Math.floor(remainingSecs / 60);
+        const s = remainingSecs % 60;
+        if (countVal) countVal.textContent = `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+      }
+    }, 1000);
+  }
+}
+
+function dismissAlarmModal() {
+  stopAudio();
+  if (alarmCountdownTimer) {
+    clearInterval(alarmCountdownTimer);
+    alarmCountdownTimer = null;
+  }
+  const modal = document.getElementById('alarmModal');
+  if (modal) modal.classList.add('is-hidden');
+}
+
+/* Check triggers every second in updateClock() */
+function checkAlarmTriggers(now) {
+  if (!state.loaded || !state.alarmConfig.enabled) return;
+  const h = String(now.getHours()).padStart(2, '0');
+  const m = String(now.getMinutes()).padStart(2, '0');
+  const currentHM = `${h}:${m}`;
+  const s = now.getSeconds();
+
+  // Check once during the first 2 seconds of each minute
+  if (s > 2) return;
+
+  PRAYERS.forEach(p => {
+    if (!state.alarmConfig.prayers[p.id]) return;
+    const adzanTime = state.prayerTimes[p.id];
+    if (!adzanTime || adzanTime === '--:--') return;
+
+    // 1. Exact Adzan Trigger
+    if (state.alarmConfig.notifyAtAdzan && currentHM === adzanTime) {
+      const key = `${p.id}-exact-${currentHM}`;
+      if (state.lastTriggeredAlarm !== key) {
+        state.lastTriggeredAlarm = key;
+        triggerAlarmModal(p, false);
+      }
+    }
+
+    // 2. 10-Minute Early Reminder
+    if (state.alarmConfig.notifyEarly) {
+      const earlyHM = subtractMinutes(adzanTime, 10);
+      if (currentHM === earlyHM) {
+        const key = `${p.id}-early-${currentHM}`;
+        if (state.lastTriggeredAlarm !== key) {
+          state.lastTriggeredAlarm = key;
+          triggerAlarmModal(p, true);
+        }
+      }
+    }
+  });
 }

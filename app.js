@@ -770,8 +770,8 @@ function renderPrayerCards() {
     const studyStartTime = time !== '--:--' ? addMinutes(time, s.offset) : '--:--';
 
     const reciprocalStudyHtml = isMinuteMode
-      ? `⏰ Mulai: <strong>${studyStartTime} ${state.location.tzLabel}</strong>`
-      : `⏳ Jarak: <strong>${s.offset}m</strong> pasca ${p.name}`;
+      ? `⏰ Mulai: <strong>${studyStartTime}</strong>`
+      : `⏳ Jarak: <strong>${s.offset}m</strong>`;
 
     return `
       <div class="prayer-card ${isCurrent ? 'is-active' : ''}" data-id="${p.id}">
@@ -801,29 +801,29 @@ function renderPrayerCards() {
           </div>
         </div>
 
-        <div class="prayer-card__tabs">
-          <button class="prayer-tab is-active" data-tab="study" data-prayer="${p.id}" type="button">
+        <div class="card-tabs">
+          <button class="card-tab-btn is-active" data-tab="study" data-prayer="${p.id}" type="button">
             📚 Belajar
           </button>
-          <button class="prayer-tab" data-tab="iqomah" data-prayer="${p.id}" type="button">
+          <button class="card-tab-btn" data-tab="iqomah" data-prayer="${p.id}" type="button">
             ⏱️ Iqomah
           </button>
         </div>
 
-        <div class="prayer-pane is-active" data-pane="study-${p.id}">
-          <div class="prayer-study-control">
-            <label class="study-toggle-label">
+        <div class="card-tab-pane is-active" data-pane="study-${p.id}">
+          <div class="prayer-card__study">
+            <label class="toggle">
               <input type="checkbox"
                      data-action="toggle-study"
                      data-prayer="${p.id}"
                      ${s.enabled ? 'checked' : ''}>
-              <span class="study-toggle-switch"></span>
-              <span class="study-toggle-text">Aktifkan Belajar</span>
+              <span class="toggle__track"></span>
+              <span class="toggle__label">Aktifkan Belajar</span>
             </label>
 
             <div class="study-inputs ${s.enabled ? 'is-visible' : ''}" data-inputs="${p.id}">
               <!-- Reciprocal Badge & Dual-Mode Pill -->
-              <div class="study-reciprocal-row">
+              <div class="smart-study-header">
                 <span class="smart-study-reciprocal" id="studyReciprocal-${p.id}">
                   ${reciprocalStudyHtml}
                 </span>
@@ -836,38 +836,36 @@ function renderPrayerCards() {
               </div>
 
               <!-- Input Row: Minute Mode -->
-              <div class="study-field-row ${!isMinuteMode ? 'is-hidden' : ''}" data-study-row="minute-${p.id}">
-                <span class="study-field-lbl">Jeda</span>
+              <div class="input-row ${!isMinuteMode ? 'is-hidden' : ''}" data-study-row="minute-${p.id}">
+                <span class="input-row__label">Jeda</span>
                 <input type="number"
-                       class="study-field-input"
                        data-action="study-offset"
                        data-prayer="${p.id}"
                        value="${s.offset}"
                        min="0" max="300" step="5">
-                <span class="study-field-unit">mnt pasca ${p.name}</span>
+                <span class="input-row__unit">mnt pasca ${p.name}</span>
               </div>
 
               <!-- Input Row: Time Mode -->
-              <div class="study-field-row ${isMinuteMode ? 'is-hidden' : ''}" data-study-row="time-${p.id}">
-                <span class="study-field-lbl">Mulai</span>
+              <div class="input-row ${isMinuteMode ? 'is-hidden' : ''}" data-study-row="time-${p.id}">
+                <span class="input-row__label">Mulai</span>
                 <input type="time"
-                       class="study-field-input study-field-input--time"
+                       class="input-time"
                        data-action="study-time"
                        data-prayer="${p.id}"
                        value="${studyStartTime}">
-                <span class="study-field-unit">${state.location.tzLabel}</span>
+                <span class="input-row__unit">${state.location.tzLabel}</span>
               </div>
 
               <!-- Duration Input -->
-              <div class="study-field-row">
-                <span class="study-field-lbl">Durasi</span>
+              <div class="input-row">
+                <span class="input-row__label">Durasi</span>
                 <input type="number"
-                       class="study-field-input"
                        data-action="study-duration"
                        data-prayer="${p.id}"
                        value="${s.duration}"
                        min="5" max="480" step="5">
-                <span class="study-field-unit">menit</span>
+                <span class="input-row__unit">menit</span>
               </div>
 
               <div class="study-preview">
@@ -877,20 +875,19 @@ function renderPrayerCards() {
           </div>
         </div>
 
-        <div class="prayer-pane" data-pane="iqomah-${p.id}">
+        <div class="card-tab-pane" data-pane="iqomah-${p.id}">
           <div class="iqomah-pane-content">
-            <div class="study-field-row">
-              <span class="study-field-lbl">Jeda Iqomah</span>
+            <div class="input-row">
+              <span class="input-row__label">Jeda Iqomah</span>
               <input type="number"
-                     class="study-field-input"
                      data-action="iqomah-duration"
                      data-prayer="${p.id}"
                      value="${s.iqomah}"
                      min="1" max="60" step="1">
-              <span class="study-field-unit">menit setelah adzan</span>
+              <span class="input-row__unit">menit pasca adzan</span>
             </div>
             <div class="iqomah-pane-hint">
-              Waktu tempuh ke masjid: <strong>${travel} menit</strong> (diatur pada panel atas)
+              Waktu jalan ke masjid: <strong>${travel} menit</strong> (diatur pada panel atas)
             </div>
           </div>
         </div>
@@ -905,24 +902,24 @@ function renderPrayerCards() {
 }
 
 function handleCardClick(e) {
-  const tabBtn = e.target.closest('.prayer-tab');
+  const tabBtn = e.target.closest('.card-tab-btn, .prayer-tab');
   if (tabBtn) {
     const prayerId = tabBtn.dataset.prayer;
     const tabType = tabBtn.dataset.tab;
     const card = tabBtn.closest('.prayer-card');
 
-    card.querySelectorAll('.prayer-tab').forEach(b => b.classList.remove('is-active'));
+    card.querySelectorAll('.card-tab-btn, .prayer-tab').forEach(b => b.classList.remove('is-active'));
     tabBtn.classList.add('is-active');
 
     const studyPane = card.querySelector(`[data-pane="study-${prayerId}"]`);
     const iqomahPane = card.querySelector(`[data-pane="iqomah-${prayerId}"]`);
 
     if (tabType === 'study') {
-      studyPane.classList.add('is-active');
-      iqomahPane.classList.remove('is-active');
+      if (studyPane) studyPane.classList.add('is-active');
+      if (iqomahPane) iqomahPane.classList.remove('is-active');
     } else {
-      iqomahPane.classList.add('is-active');
-      studyPane.classList.remove('is-active');
+      if (iqomahPane) iqomahPane.classList.add('is-active');
+      if (studyPane) studyPane.classList.remove('is-active');
     }
     return;
   }
@@ -1009,9 +1006,9 @@ function updatePrayerStudyReciprocal(prayerId) {
   if (!recipEl) return;
 
   if (isMinute) {
-    recipEl.innerHTML = `⏰ Mulai: <strong>${studyStart} ${state.location.tzLabel}</strong>`;
+    recipEl.innerHTML = `⏰ Mulai: <strong>${studyStart}</strong>`;
   } else {
-    recipEl.innerHTML = `⏳ Jarak: <strong>${s.offset}m</strong> pasca ${pName}`;
+    recipEl.innerHTML = `⏳ Jarak: <strong>${s.offset}m</strong>`;
   }
 }
 
@@ -1170,11 +1167,12 @@ function renderSchedule() {
 
   // Render Timeline Elements
   timelineEl.innerHTML = filteredEvents.map(e => `
-    <div class="timeline-item timeline-item--${e.category}">
-      <div class="timeline-time">${e.time}</div>
-      <div class="timeline-content">
-        <div class="timeline-title">${e.title}</div>
-        <div class="timeline-detail">${e.detail}</div>
+    <div class="timeline-item timeline-item--${e.category} timeline-item--${e.type}">
+      <div class="timeline-item__dot"></div>
+      <div class="timeline-item__content">
+        <div class="timeline-item__time">${e.time} ${state.location.tzLabel}</div>
+        <div class="timeline-item__label">${e.title}</div>
+        <div class="timeline-item__detail">${e.detail}</div>
       </div>
     </div>
   `).join('');

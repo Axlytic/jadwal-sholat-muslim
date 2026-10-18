@@ -1431,3 +1431,183 @@ a:hover { opacity: .8; }
   display: block;
   animation: fadeUp .25s var(--ease-spring);
 }
+
+/* =============================================
+   PRAYER CARD & TIMELINE POLISH (MOBBIN / DRIBBLE)
+   ============================================= */
+.card-tabs {
+  display: flex;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 3px;
+  margin-bottom: .6rem;
+}
+.card-tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  font-family: var(--font-sans);
+  font-size: .72rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding: .35rem 0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all .2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .3rem;
+}
+.card-tab-btn:hover { color: var(--text-primary); }
+.card-tab-btn.is-active {
+  background: rgba(255, 255, 255, 0.14);
+  color: #ffffff;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+.card-tab-pane { display: none; }
+.card-tab-pane.is-active { display: block; animation: fadeUp .25s var(--ease-spring); }
+
+/* Toggle Switch in Prayer Card */
+.prayer-card__study {
+  margin-top: .2rem;
+}
+.toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: .45rem;
+  cursor: pointer;
+  user-select: none;
+  margin-bottom: .5rem;
+}
+.toggle input { display: none; }
+.toggle__track {
+  width: 34px; height: 18px;
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  position: relative;
+  transition: background .25s;
+  flex-shrink: 0;
+}
+.toggle__track::after {
+  content: '';
+  position: absolute;
+  width: 14px; height: 14px;
+  background: #ffffff;
+  border-radius: 50%;
+  top: 2px; left: 2px;
+  transition: transform .25s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.4);
+}
+.toggle input:checked + .toggle__track {
+  background: var(--gold-500);
+}
+.toggle input:checked + .toggle__track::after {
+  transform: translateX(16px);
+}
+.toggle__label {
+  font-size: .74rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+/* Input Rows in Study & Iqomah Panes */
+.input-row {
+  display: flex;
+  align-items: center;
+  gap: .45rem;
+  margin-bottom: .35rem;
+}
+.input-row.is-hidden { display: none !important; }
+.input-row__label {
+  font-size: .72rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  font-weight: 600;
+  min-width: 44px;
+}
+.input-row input[type="number"] {
+  width: 58px;
+  padding: .35rem .4rem;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: #ffffff;
+  font-family: var(--font-sans);
+  font-size: .82rem;
+  font-weight: 700;
+  text-align: center;
+  outline: none;
+  transition: all .2s;
+  -moz-appearance: textfield;
+}
+.input-row input[type="number"]::-webkit-inner-spin-button,
+.input-row input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+.input-row input[type="number"]:focus {
+  border-color: var(--cyan-400);
+  background: rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 8px rgba(14, 165, 233, 0.4);
+}
+.input-row input[type="time"],
+.input-time {
+  width: 92px;
+  padding: .35rem .45rem;
+  background: rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  color: #ffffff;
+  font-family: var(--font-sans);
+  font-size: .78rem;
+  font-weight: 700;
+  text-align: center;
+  outline: none;
+  transition: all .2s;
+  color-scheme: dark;
+}
+.input-row input[type="time"]:focus,
+.input-time:focus {
+  border-color: var(--cyan-400);
+  background: rgba(0, 0, 0, 0.7);
+  box-shadow: 0 0 8px rgba(14, 165, 233, 0.4);
+}
+.input-row__unit {
+  font-size: .68rem;
+  color: var(--text-muted);
+}
+
+.smart-study-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: .45rem;
+  gap: .35rem;
+}
+.smart-study-reciprocal {
+  font-size: .68rem;
+  font-weight: 700;
+  color: var(--gold-400);
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.25);
+  padding: .2rem .45rem;
+  border-radius: var(--radius-xs);
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+.iqomah-pane-hint {
+  font-size: .7rem;
+  color: var(--text-muted);
+  margin-top: .45rem;
+  padding: .4rem .6rem;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  line-height: 1.45;
+}
+.iqomah-pane-hint strong {
+  color: var(--cyan-400);
+}

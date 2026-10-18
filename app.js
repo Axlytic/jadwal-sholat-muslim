@@ -19,8 +19,8 @@ const PRAYERS = [
   { id: 'isha',    apiKey: 'Isha',    name: 'Isya',    arabic: 'العشاء', icon: '🌙', defaultOn: true,  defaultOffset: 30,  defaultDuration: 60,  defaultIqomah: 10 },
 ];
 
-const STORAGE_KEY = 'jadwalHarian_settings_v2';
-const LEGACY_STORAGE_KEY = 'jadwalHarian_settings';
+const STORAGE_KEY = 'jadwalHarian_settings_v3';
+const LEGACY_STORAGE_KEY = 'jadwalHarian_settings_v2';
 
 /* =============================================
    STATE
@@ -29,11 +29,13 @@ let state = {
   prayerTimes: {},       // { fajr: '04:32', ... }
   hijriDate: null,
   gregorianDate: null,
-  settings: {},          // { fajr: { enabled, offset, duration, iqomah }, ... }
+  settings: {},          // { fajr: { enabled, offset, duration, iqomah, studyMode: 'minute' }, ... }
   sleepConfig: {
     sleepAfterIsha: 60,  // menit pasca Isya
     wakeBeforeFajr: 30,  // menit jelang Subuh
     globalTravel: 5,     // menit perjalanan ke masjid
+    sleepInputMode: 'minute', // 'minute' | 'time'
+    wakeInputMode: 'minute',  // 'minute' | 'time'
   },
   activeFilter: 'all',   // 'all', 'prayer', 'study', 'sleep'
   loaded: false,
@@ -51,17 +53,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function loadSettings() {
   let saved = null;
-  try {
-    saved = JSON.parse(localStorage.getItem(STORAGE_KEY));
-  } catch(e) {}
+  try { saved = JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch(e) {}
 
   if (!saved) {
-    try {
-      const old = JSON.parse(localStorage.getItem(LEGACY_STORAGE_KEY));
-      if (old) {
-        saved = { prayers: old };
-      }
-    } catch(e) {}
+    try { saved = JSON.parse(localStorage.getItem(LEGACY_STORAGE_KEY)); } catch(e) {}
   }
 
   PRAYERS.forEach(p => {
@@ -72,6 +67,7 @@ function loadSettings() {
         offset: prayerSaved.offset ?? p.defaultOffset,
         duration: prayerSaved.duration ?? p.defaultDuration,
         iqomah: prayerSaved.iqomah ?? p.defaultIqomah,
+        studyMode: prayerSaved.studyMode ?? 'minute',
       };
     } else {
       state.settings[p.id] = {
@@ -79,6 +75,7 @@ function loadSettings() {
         offset: p.defaultOffset,
         duration: p.defaultDuration,
         iqomah: p.defaultIqomah,
+        studyMode: 'minute',
       };
     }
   });
@@ -87,15 +84,22 @@ function loadSettings() {
     state.sleepConfig.sleepAfterIsha = saved.sleep.sleepAfterIsha ?? 60;
     state.sleepConfig.wakeBeforeFajr = saved.sleep.wakeBeforeFajr ?? 30;
     state.sleepConfig.globalTravel = saved.sleep.globalTravel ?? 5;
+    state.sleepConfig.sleepInputMode = saved.sleep.sleepInputMode ?? 'minute';
+    state.sleepConfig.wakeInputMode = saved.sleep.wakeInputMode ?? 'minute';
   }
 
-  const sleepInput = document.getElementById('sleepAfterIshaInput');
-  const wakeInput = document.getElementById('wakeBeforeFajrInput');
+  // Sync inputs
+  const sleepMinInput = document.getElementById('sleepAfterIshaInput');
+  const wakeMinInput = document.getElementById('wakeBeforeFajrInput');
   const travelInput = document.getElementById('globalTravelInput');
 
-  if (sleepInput) sleepInput.value = state.sleepConfig.sleepAfterIsha;
-  if (wakeInput) wakeInput.value = state.sleepConfig.wakeBeforeFajr;
+  if (sleepMinInput) sleepMinInput.value = state.sleepConfig.sleepAfterIsha;
+  if (wakeMinInput) wakeMinInput.value = state.sleepConfig.wakeBeforeFajr;
   if (travelInput) travelInput.value = state.sleepConfig.globalTravel;
+
+  // Set initial active state of mode buttons
+  updateSleepModeUI();
+  updateWakeModeUI();
 }
 
 function saveSettings() {
@@ -108,7 +112,11 @@ function saveSettings() {
   } catch(e) {}
 }
 
+/* =============================================
+   EVENT LISTENERS & SMART DUAL-MODE CONTROLS
+   ============================================= */
 function initEventListeners() {
+  // Drawer Toggle
   const btnToggle = document.getElementById('btnToggleSleepConfig');
   const btnText = document.getElementById('btnToggleSleepConfigText');
   const panel = document.getElementById('sleepConfigPanel');
@@ -121,28 +129,109 @@ function initEventListeners() {
     });
   }
 
-  const sleepInput = document.getElementById('sleepAfterIshaInput');
-  const wakeInput = document.getElementById('wakeBeforeFajrInput');
-  const travelInput = document.getElementById('globalTravelInput');
+  // --- SMART INPUT 1: MULAI TIDUR ---
+  // Mode switcher: Menit vs Jam
+  const smartSleepBox = document.getElementById('smartSleepInputBox');
+  if (smartSleepBox) {
+    smartSleepBox.addEventListener('click', (e) => {
+      const btn = e.target.closest('.btn-mode');
+      if (!btn) return;
+      state.sleepConfig.sleepInputMode = btn.dataset.mode;
+      updateSleepModeUI();
+      saveSettings();
+    });
+  }
 
-  if (sleepInput) {
-    sleepInput.addEventListener('input', (e) => {
-      state.sleepConfig.sleepAfterIsha = clamp(parseInt(e.target.value) || 0, 0, 300);
+  // Input minute
+  const sleepMinInput = document.getElementById('sleepAfterIshaInput');
+  if (sleepMinInput) {
+    sleepMinInput.addEventListener('input', (e) => {
+      state.sleepConfig.sleepAfterIsha = clamp(parseInt(e.target.value) || 0, 0, 360);
+      updateSleepReciprocal();
       saveSettings();
       renderSleepCard();
       renderSchedule();
     });
   }
 
-  if (wakeInput) {
-    wakeInput.addEventListener('input', (e) => {
+  // Input time
+  const sleepTimeInput = document.getElementById('sleepTargetTimeInput');
+  if (sleepTimeInput) {
+    sleepTimeInput.addEventListener('change', (e) => {
+      const ishaTime = state.prayerTimes['isha'];
+      if (!ishaTime) return;
+      const targetTime = e.target.value; // "HH:MM"
+      const ishaMins = timeToMinutes(ishaTime);
+      const targetMins = timeToMinutes(targetTime);
+
+      let diff = 0;
+      if (targetMins >= ishaMins) {
+        diff = targetMins - ishaMins;
+      } else {
+        // Past midnight
+        diff = (1440 - ishaMins) + targetMins;
+      }
+      state.sleepConfig.sleepAfterIsha = clamp(diff, 0, 360);
+      if (sleepMinInput) sleepMinInput.value = state.sleepConfig.sleepAfterIsha;
+      updateSleepReciprocal();
+      saveSettings();
+      renderSleepCard();
+      renderSchedule();
+    });
+  }
+
+  // --- SMART INPUT 2: BANGUN PAGI ---
+  // Mode switcher: Menit vs Jam
+  const smartWakeBox = document.getElementById('smartWakeInputBox');
+  if (smartWakeBox) {
+    smartWakeBox.addEventListener('click', (e) => {
+      const btn = e.target.closest('.btn-mode');
+      if (!btn) return;
+      state.sleepConfig.wakeInputMode = btn.dataset.mode;
+      updateWakeModeUI();
+      saveSettings();
+    });
+  }
+
+  // Input minute
+  const wakeMinInput = document.getElementById('wakeBeforeFajrInput');
+  if (wakeMinInput) {
+    wakeMinInput.addEventListener('input', (e) => {
       state.sleepConfig.wakeBeforeFajr = clamp(parseInt(e.target.value) || 0, 0, 240);
+      updateWakeReciprocal();
       saveSettings();
       renderSleepCard();
       renderSchedule();
     });
   }
 
+  // Input time
+  const wakeTimeInput = document.getElementById('wakeTargetTimeInput');
+  if (wakeTimeInput) {
+    wakeTimeInput.addEventListener('change', (e) => {
+      const fajrTime = state.prayerTimes['fajr'];
+      if (!fajrTime) return;
+      const targetTime = e.target.value; // "HH:MM"
+      const fajrMins = timeToMinutes(fajrTime);
+      const targetMins = timeToMinutes(targetTime);
+
+      let diff = 0;
+      if (fajrMins >= targetMins) {
+        diff = fajrMins - targetMins;
+      } else {
+        diff = (1440 - targetMins) + fajrMins;
+      }
+      state.sleepConfig.wakeBeforeFajr = clamp(diff, 0, 240);
+      if (wakeMinInput) wakeMinInput.value = state.sleepConfig.wakeBeforeFajr;
+      updateWakeReciprocal();
+      saveSettings();
+      renderSleepCard();
+      renderSchedule();
+    });
+  }
+
+  // Travel time input
+  const travelInput = document.getElementById('globalTravelInput');
   if (travelInput) {
     travelInput.addEventListener('input', (e) => {
       state.sleepConfig.globalTravel = clamp(parseInt(e.target.value) || 0, 0, 60);
@@ -152,6 +241,7 @@ function initEventListeners() {
     });
   }
 
+  // Timeline Filter
   const filterContainer = document.getElementById('timelineFilter');
   if (filterContainer) {
     filterContainer.addEventListener('click', (e) => {
@@ -162,6 +252,89 @@ function initEventListeners() {
       state.activeFilter = btn.dataset.filter || 'all';
       renderSchedule();
     });
+  }
+}
+
+/* =============================================
+   SMART RECIPROCAL UI HELPERS
+   ============================================= */
+function updateSleepModeUI() {
+  const isMinute = state.sleepConfig.sleepInputMode === 'minute';
+  const box = document.getElementById('smartSleepInputBox');
+  if (!box) return;
+
+  box.querySelectorAll('.btn-mode').forEach(b => {
+    b.classList.toggle('is-active', b.dataset.mode === state.sleepConfig.sleepInputMode);
+  });
+
+  const minWrap = document.getElementById('sleepInputMinuteWrap');
+  const timeWrap = document.getElementById('sleepInputTimeWrap');
+  if (minWrap && timeWrap) {
+    minWrap.classList.toggle('is-hidden', !isMinute);
+    timeWrap.classList.toggle('is-hidden', isMinute);
+  }
+
+  updateSleepReciprocal();
+}
+
+function updateSleepReciprocal() {
+  const isMinute = state.sleepConfig.sleepInputMode === 'minute';
+  const ishaTime = state.prayerTimes['isha'] || '19:22';
+  const offset = state.sleepConfig.sleepAfterIsha;
+  const calculatedTime = addMinutes(ishaTime, offset);
+
+  const timeInput = document.getElementById('sleepTargetTimeInput');
+  if (timeInput) timeInput.value = calculatedTime;
+
+  const lbl = document.getElementById('sleepReciprocalLabel');
+  if (!lbl) return;
+
+  if (isMinute) {
+    // Mode Menit: Tampilkan label Jam
+    lbl.innerHTML = `⏰ Waktu Tidur: <strong>${calculatedTime} WITA</strong>`;
+  } else {
+    // Mode Jam: Tampilkan label Menit
+    lbl.innerHTML = `⏳ Selisih: <strong>${offset} menit</strong> pasca Isya (${ishaTime})`;
+  }
+}
+
+function updateWakeModeUI() {
+  const isMinute = state.sleepConfig.wakeInputMode === 'minute';
+  const box = document.getElementById('smartWakeInputBox');
+  if (!box) return;
+
+  box.querySelectorAll('.btn-mode').forEach(b => {
+    b.classList.toggle('is-active', b.dataset.mode === state.sleepConfig.wakeInputMode);
+  });
+
+  const minWrap = document.getElementById('wakeInputMinuteWrap');
+  const timeWrap = document.getElementById('wakeInputTimeWrap');
+  if (minWrap && timeWrap) {
+    minWrap.classList.toggle('is-hidden', !isMinute);
+    timeWrap.classList.toggle('is-hidden', isMinute);
+  }
+
+  updateWakeReciprocal();
+}
+
+function updateWakeReciprocal() {
+  const isMinute = state.sleepConfig.wakeInputMode === 'minute';
+  const fajrTime = state.prayerTimes['fajr'] || '04:43';
+  const offset = state.sleepConfig.wakeBeforeFajr;
+  const calculatedTime = subtractMinutes(fajrTime, offset);
+
+  const timeInput = document.getElementById('wakeTargetTimeInput');
+  if (timeInput) timeInput.value = calculatedTime;
+
+  const lbl = document.getElementById('wakeReciprocalLabel');
+  if (!lbl) return;
+
+  if (isMinute) {
+    // Mode Menit: Tampilkan label Jam
+    lbl.innerHTML = `⏰ Waktu Bangun: <strong>${calculatedTime} WITA</strong>`;
+  } else {
+    // Mode Jam: Tampilkan label Menit
+    lbl.innerHTML = `⏳ Selisih: <strong>${offset} menit</strong> jelang Subuh (${fajrTime})`;
   }
 }
 
@@ -223,6 +396,8 @@ function renderAll() {
   renderPrayerCards();
   renderSchedule();
   updateClock();
+  updateSleepReciprocal();
+  updateWakeReciprocal();
 }
 
 /* ---- Dates Header ---- */
@@ -294,7 +469,7 @@ function renderSleepCard() {
   }
 }
 
-/* ---- Prayer Cards (Dribbble Bento Tiles) ---- */
+/* ---- Prayer Cards (With Smart Dual-Mode Study Input) ---- */
 function renderPrayerCards() {
   const grid = document.getElementById('prayerGrid');
   const currentId = getCurrentPrayerId();
@@ -310,6 +485,7 @@ function renderPrayerCards() {
 
     const studyStart = s.enabled ? addMinutes(time, s.offset) : null;
     const studyEnd = s.enabled ? addMinutes(time, s.offset + s.duration) : null;
+    const isStudyMinMode = s.studyMode === 'minute';
 
     return `
       <div class="prayer-card ${isCurrent ? 'is-current' : ''}" data-id="${p.id}">
@@ -341,7 +517,7 @@ function renderPrayerCards() {
           <button type="button" class="card-tab-btn" data-tab="iqomah" data-prayer="${p.id}">⏱️ Iqomah</button>
         </div>
 
-        <!-- Tab Pane 1: Belajar -->
+        <!-- Tab Pane 1: Belajar (Smart Dual-Mode) -->
         <div class="card-tab-pane is-active" data-pane="study-${p.id}">
           <label class="toggle">
             <input type="checkbox" ${s.enabled ? 'checked' : ''} data-action="toggle-study" data-prayer="${p.id}">
@@ -349,16 +525,38 @@ function renderPrayerCards() {
             <span class="toggle__label">Aktifkan Belajar</span>
           </label>
           <div class="study-inputs ${s.enabled ? 'is-visible' : ''}" data-inputs="${p.id}">
-            <div class="input-row">
+            
+            <!-- Smart Mode Header inside Prayer Card -->
+            <div class="smart-study-header">
+              <span class="smart-study-reciprocal" id="studyReciprocal-${p.id}">
+                ${isStudyMinMode ? `⏰ Jam ${studyStart || '--:--'}` : `⏳ ${s.offset}m pasca ${p.name}`}
+              </span>
+              <div class="smart-toggle-pill">
+                <button type="button" class="btn-mode ${isStudyMinMode ? 'is-active' : ''}" data-action="toggle-study-mode" data-mode="minute" data-prayer="${p.id}">Menit</button>
+                <button type="button" class="btn-mode ${!isStudyMinMode ? 'is-active' : ''}" data-action="toggle-study-mode" data-mode="time" data-prayer="${p.id}">Jam</button>
+              </div>
+            </div>
+
+            <!-- Jeda / Waktu Mulai Input -->
+            <div class="input-row ${isStudyMinMode ? '' : 'is-hidden'}" data-study-row="minute-${p.id}">
               <span class="input-row__label">Jeda</span>
               <input type="number" value="${s.offset}" min="0" max="300" data-action="study-offset" data-prayer="${p.id}">
-              <span class="input-row__unit">mnt</span>
+              <span class="input-row__unit">mnt pasca ${p.name}</span>
             </div>
+
+            <div class="input-row ${!isStudyMinMode ? '' : 'is-hidden'}" data-study-row="time-${p.id}">
+              <span class="input-row__label">Mulai</span>
+              <input type="time" value="${studyStart || '13:00'}" data-action="study-time" data-prayer="${p.id}" style="width:90px; color-scheme:dark; background:var(--bg-input); border:1px solid var(--border-card); border-radius:6px; color:#fff; font-weight:700; text-align:center;">
+              <span class="input-row__unit">WITA</span>
+            </div>
+
+            <!-- Durasi Belajar -->
             <div class="input-row">
               <span class="input-row__label">Durasi</span>
               <input type="number" value="${s.duration}" min="5" max="480" data-action="study-duration" data-prayer="${p.id}">
-              <span class="input-row__unit">mnt</span>
+              <span class="input-row__unit">menit</span>
             </div>
+
             ${studyStart ? `
             <div class="study-preview">
               📚 ${studyStart} — ${studyEnd}
@@ -384,28 +582,53 @@ function renderPrayerCards() {
 
   grid.addEventListener('change', handleCardInput);
   grid.addEventListener('input', handleCardInput);
-  grid.addEventListener('click', handleCardTabs);
+  grid.addEventListener('click', handleCardClick);
 }
 
-function handleCardTabs(e) {
-  const btn = e.target.closest('.card-tab-btn');
-  if (!btn) return;
-  const prayerId = btn.dataset.prayer;
-  const tabType = btn.dataset.tab;
-  const card = btn.closest('.prayer-card');
+function handleCardClick(e) {
+  // Tab switcher
+  const tabBtn = e.target.closest('.card-tab-btn');
+  if (tabBtn) {
+    const prayerId = tabBtn.dataset.prayer;
+    const tabType = tabBtn.dataset.tab;
+    const card = tabBtn.closest('.prayer-card');
 
-  card.querySelectorAll('.card-tab-btn').forEach(b => b.classList.remove('is-active'));
-  btn.classList.add('is-active');
+    card.querySelectorAll('.card-tab-btn').forEach(b => b.classList.remove('is-active'));
+    tabBtn.classList.add('is-active');
 
-  const studyPane = card.querySelector(`[data-pane="study-${prayerId}"]`);
-  const iqomahPane = card.querySelector(`[data-pane="iqomah-${prayerId}"]`);
+    const studyPane = card.querySelector(`[data-pane="study-${prayerId}"]`);
+    const iqomahPane = card.querySelector(`[data-pane="iqomah-${prayerId}"]`);
 
-  if (tabType === 'study') {
-    studyPane.classList.add('is-active');
-    iqomahPane.classList.remove('is-active');
-  } else {
-    iqomahPane.classList.add('is-active');
-    studyPane.classList.remove('is-active');
+    if (tabType === 'study') {
+      studyPane.classList.add('is-active');
+      iqomahPane.classList.remove('is-active');
+    } else {
+      iqomahPane.classList.add('is-active');
+      studyPane.classList.remove('is-active');
+    }
+    return;
+  }
+
+  // Study Dual-Mode button in prayer card
+  const modeBtn = e.target.closest('[data-action="toggle-study-mode"]');
+  if (modeBtn) {
+    const prayerId = modeBtn.dataset.prayer;
+    const mode = modeBtn.dataset.mode;
+    state.settings[prayerId].studyMode = mode;
+
+    const card = modeBtn.closest('.prayer-card');
+    card.querySelectorAll('[data-action="toggle-study-mode"]').forEach(b => b.classList.toggle('is-active', b.dataset.mode === mode));
+
+    const minRow = card.querySelector(`[data-study-row="minute-${prayerId}"]`);
+    const timeRow = card.querySelector(`[data-study-row="time-${prayerId}"]`);
+
+    if (minRow && timeRow) {
+      minRow.classList.toggle('is-hidden', mode !== 'minute');
+      timeRow.classList.toggle('is-hidden', mode === 'minute');
+    }
+
+    updatePrayerStudyReciprocal(prayerId);
+    saveSettings();
   }
 }
 
@@ -416,6 +639,7 @@ function handleCardInput(e) {
   if (!action || !prayerId) return;
 
   const s = state.settings[prayerId];
+  const prayerTime = state.prayerTimes[prayerId] || '12:00';
 
   if (action === 'toggle-study') {
     s.enabled = el.checked;
@@ -423,15 +647,26 @@ function handleCardInput(e) {
     if (inputs) inputs.classList.toggle('is-visible', s.enabled);
   } else if (action === 'study-offset') {
     s.offset = clamp(parseInt(el.value) || 0, 0, 300);
+    // sync time input
+    const timeInput = document.querySelector(`[data-action="study-time"][data-prayer="${prayerId}"]`);
+    if (timeInput) timeInput.value = addMinutes(prayerTime, s.offset);
+  } else if (action === 'study-time') {
+    const targetTime = el.value;
+    const prayerMins = timeToMinutes(prayerTime);
+    const targetMins = timeToMinutes(targetTime);
+    let diff = targetMins >= prayerMins ? (targetMins - prayerMins) : ((1440 - prayerMins) + targetMins);
+    s.offset = clamp(diff, 0, 300);
+    // sync minute input
+    const minInput = document.querySelector(`[data-action="study-offset"][data-prayer="${prayerId}"]`);
+    if (minInput) minInput.value = s.offset;
   } else if (action === 'study-duration') {
     s.duration = clamp(parseInt(el.value) || 5, 5, 480);
   } else if (action === 'iqomah-duration') {
     s.iqomah = clamp(parseInt(el.value) || 1, 1, 60);
     const card = document.querySelector(`.prayer-card[data-id="${prayerId}"]`);
     if (card) {
-      const time = state.prayerTimes[prayerId];
       const travel = state.sleepConfig.globalTravel;
-      const iqomahTime = addMinutes(time, s.iqomah);
+      const iqomahTime = addMinutes(prayerTime, s.iqomah);
       const departTime = subtractMinutes(iqomahTime, travel);
       const iqomahEl = card.querySelector('.timing-row__val--iqomah');
       const departEl = card.querySelector('.timing-row__val--depart');
@@ -441,8 +676,29 @@ function handleCardInput(e) {
   }
 
   saveSettings();
+  updatePrayerStudyReciprocal(prayerId);
   updateStudyPreview(prayerId);
   renderSchedule();
+}
+
+function updatePrayerStudyReciprocal(prayerId) {
+  const s = state.settings[prayerId];
+  const prayerTime = state.prayerTimes[prayerId] || '12:00';
+  const studyStart = addMinutes(prayerTime, s.offset);
+  const isMinute = s.studyMode === 'minute';
+  const pObj = PRAYERS.find(p => p.id === prayerId);
+  const pName = pObj ? pObj.name : '';
+
+  const recipEl = document.getElementById(`studyReciprocal-${prayerId}`);
+  if (!recipEl) return;
+
+  if (isMinute) {
+    // Mode Menit: Label di atas menampilkan JAM
+    recipEl.innerHTML = `⏰ Mulai: <strong>${studyStart} WITA</strong>`;
+  } else {
+    // Mode Jam: Label di atas menampilkan MENIT
+    recipEl.innerHTML = `⏳ Jarak: <strong>${s.offset}m</strong> pasca ${pName}`;
+  }
 }
 
 function updateStudyPreview(prayerId) {
@@ -640,7 +896,6 @@ function updateClock() {
   const nowSecs = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
   const nowMins = now.getHours() * 60 + now.getMinutes();
 
-  // Elements in Bento Hero
   const heroName = document.getElementById('heroPrayerName');
   const heroAdzan = document.getElementById('heroAdzanTime');
   const heroIcon = document.getElementById('heroIcon');
@@ -696,7 +951,6 @@ function updateClock() {
       heroProgressBar.style.width = `${pct}%`;
     }
   } else {
-    // Next is Subuh tomorrow
     const fajr = PRAYERS[0];
     const fajrAdzan = state.prayerTimes['fajr'];
     const s = state.settings['fajr'];

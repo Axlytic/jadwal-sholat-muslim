@@ -41,9 +41,9 @@
       </div>
     </header>
 
-    <!-- ===== BENTO GRID DASHBOARD (Trending Mobbin & Dribbble Pattern) ===== -->
+    <!-- ===== BENTO GRID DASHBOARD ===== -->
     <div class="bento-grid">
-      <!-- 1. HERO CARD: Next Prayer with Arabic Calligraphy & Living Countdown -->
+      <!-- 1. HERO CARD -->
       <div class="bento-card bento-card--hero" id="bentoHeroCard">
         <div class="bento-hero__arabic" id="heroArabicCalligraphy">الظهر</div>
         <div class="bento-hero__header">
@@ -139,38 +139,89 @@
       </div>
     </div>
 
-    <!-- Hidden / Expandable Settings Drawer -->
+    <!-- ===== EXPANDABLE SETTINGS DRAWER WITH SMART DUAL-MODE INPUTS ===== -->
     <div class="config-drawer is-hidden" id="sleepConfigPanel">
       <div class="drawer-header">
-        <h3>⚙️ Pengaturan Waktu & Masjid</h3>
-        <p>Sesuaikan jeda iqomah, waktu jalan ke masjid, dan jadwal tidur Anda</p>
+        <div>
+          <h3>⚙️ Pengaturan Cerdas: Waktu, Tidur & Masjid</h3>
+          <p>Pilih mode input: masukkan dalam <strong>Menit Jeda</strong> atau langsung tentukan <strong>Target Jam</strong></p>
+        </div>
       </div>
+
       <div class="config-grid">
-        <div class="config-box">
-          <label for="sleepAfterIshaInput">🌙 Jeda Tidur Pasca Isya</label>
-          <div class="input-unit-wrap">
-            <input type="number" id="sleepAfterIshaInput" min="15" max="300" value="60">
-            <span>menit</span>
+        <!-- 1. Smart Input: Tidur Pasca Isya -->
+        <div class="config-box config-box--smart" id="smartSleepInputBox">
+          <div class="smart-box__header">
+            <span class="smart-box__title">🌙 Mulai Tidur Malam</span>
+            <div class="smart-toggle-pill">
+              <button type="button" class="btn-mode is-active" data-smart="sleep" data-mode="minute">Menit</button>
+              <button type="button" class="btn-mode" data-smart="sleep" data-mode="time">Jam</button>
+            </div>
+          </div>
+
+          <!-- Reciprocal dynamic feedback label -->
+          <div class="reciprocal-label" id="sleepReciprocalLabel">
+            ⏰ Jam 20:22 WITA
+          </div>
+
+          <!-- Input fields -->
+          <div class="smart-input-container">
+            <div class="input-unit-wrap input-unit-wrap--minute" id="sleepInputMinuteWrap">
+              <input type="number" id="sleepAfterIshaInput" min="0" max="360" value="60">
+              <span>menit pasca Isya</span>
+            </div>
+            <div class="input-unit-wrap input-unit-wrap--time is-hidden" id="sleepInputTimeWrap">
+              <input type="time" id="sleepTargetTimeInput" value="20:22">
+              <span>target jam tidur</span>
+            </div>
           </div>
         </div>
-        <div class="config-box">
-          <label for="wakeBeforeFajrInput">⏰ Bangun Sebelum Subuh</label>
-          <div class="input-unit-wrap">
-            <input type="number" id="wakeBeforeFajrInput" min="10" max="240" value="30">
-            <span>menit</span>
+
+        <!-- 2. Smart Input: Bangun Sebelum Subuh -->
+        <div class="config-box config-box--smart" id="smartWakeInputBox">
+          <div class="smart-box__header">
+            <span class="smart-box__title">⏰ Bangun Pagi / Subuh</span>
+            <div class="smart-toggle-pill">
+              <button type="button" class="btn-mode is-active" data-smart="wake" data-mode="minute">Menit</button>
+              <button type="button" class="btn-mode" data-smart="wake" data-mode="time">Jam</button>
+            </div>
+          </div>
+
+          <!-- Reciprocal dynamic feedback label -->
+          <div class="reciprocal-label" id="wakeReciprocalLabel">
+            ⏰ Jam 04:13 WITA
+          </div>
+
+          <!-- Input fields -->
+          <div class="smart-input-container">
+            <div class="input-unit-wrap input-unit-wrap--minute" id="wakeInputMinuteWrap">
+              <input type="number" id="wakeBeforeFajrInput" min="0" max="240" value="30">
+              <span>menit jelang Subuh</span>
+            </div>
+            <div class="input-unit-wrap input-unit-wrap--time is-hidden" id="wakeInputTimeWrap">
+              <input type="time" id="wakeTargetTimeInput" value="04:13">
+              <span>target jam bangun</span>
+            </div>
           </div>
         </div>
+
+        <!-- 3. Regular Input: Waktu Jalan ke Masjid -->
         <div class="config-box">
-          <label for="globalTravelInput">🚶 Jarak Tempuh ke Masjid</label>
+          <div class="smart-box__header">
+            <span class="smart-box__title">🚶 Waktu Jalan ke Masjid</span>
+          </div>
+          <div class="reciprocal-label">
+            Digunakan untuk batas waktu berangkat
+          </div>
           <div class="input-unit-wrap">
             <input type="number" id="globalTravelInput" min="1" max="60" value="5">
-            <span>menit jalan kaki</span>
+            <span>menit perjalanan</span>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- ===== 5 PRAYER CARDS (Modern Dribbble Tiles) ===== -->
+    <!-- ===== 5 PRAYER CARDS ===== -->
     <section class="section">
       <div class="section__header">
         <div>
@@ -191,7 +242,7 @@
       </div>
     </section>
 
-    <!-- ===== TIMELINE FEED (Mobbin Agenda Style) ===== -->
+    <!-- ===== TIMELINE FEED ===== -->
     <section class="section" id="scheduleSection" style="display:none;">
       <div class="section__header">
         <div>

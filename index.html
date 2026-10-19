@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090d16">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="google-site-verification" content="w9xqyovSVPLx1A_wIBC_sehNQLTY-S4Oq3s-Hu7e3mQ">
   <title>Mizan — Keseimbangan Waktu Sholat, Belajar & Istirahat</title>
   <meta name="description" content="Mizan: Asisten manajemen waktu harian muslim untuk menjaga keseimbangan antara ibadah sholat 5 waktu akurat (GPS & Standar Kemenag RI), estimasi iqomah masjid, jadwal belajar produktif, serta istirahat tidur berkualitas.">
@@ -41,9 +45,19 @@
   }
   </script>
 
+    <!-- Preconnect to Font Origins -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Amiri:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <!-- Non-render-blocking Web Fonts with streamlined weights and display=swap -->
+  <link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap" media="print" onload="this.media='all'">
+  <noscript>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Amiri:wght@400;700&display=swap">
+  </noscript>
+
+  <!-- Preload & Link Local Stylesheet -->
+  <link rel="preload" href="style.css" as="style">
   <link rel="stylesheet" href="style.css">
 </head>
 <body class="theme-dribbble">
@@ -593,6 +607,6 @@
     </div>
   </div>
 
-  <script src="app.js"></script>
+  <script src="app.js" defer></script>
 </body>
 </html>
